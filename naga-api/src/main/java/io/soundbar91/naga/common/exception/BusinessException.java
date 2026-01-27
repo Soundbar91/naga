@@ -13,12 +13,6 @@ package io.soundbar91.naga.common.exception;
  *
  * // ErrorCode + 커스텀 메시지
  * throw new BusinessException(ErrorCode.VALIDATION_FAILED, "Email format invalid");
- *
- * // ErrorCode + 원인 예외
- * throw new BusinessException(ErrorCode.DATABASE_CONNECTION_ERROR, cause);
- *
- * // ErrorCode + 커스텀 메시지 + 원인 예외
- * throw new BusinessException(ErrorCode.INTERNAL_SERVER_ERROR, "Custom message", cause);
  * }</pre>
  *
  * @since 1.0
@@ -47,33 +41,6 @@ public class BusinessException extends RuntimeException {
      */
     public BusinessException(ErrorCode errorCode, String message) {
         super(message);
-        this.errorCode = errorCode;
-    }
-
-    /**
-     * ErrorCode와 원인 예외로 예외를 생성합니다
-     *
-     * <p>다른 예외를 래핑할 때 사용합니다.</p>
-     *
-     * @param errorCode 오류 코드
-     * @param cause 원인 예외
-     */
-    public BusinessException(ErrorCode errorCode, Throwable cause) {
-        super(errorCode.getMessage(), cause);
-        this.errorCode = errorCode;
-    }
-
-    /**
-     * ErrorCode, 커스텀 메시지, 원인 예외로 예외를 생성합니다
-     *
-     * <p>다른 예외를 래핑하면서 커스텀 메시지를 제공할 때 사용합니다.</p>
-     *
-     * @param errorCode 오류 코드
-     * @param message 커스텀 오류 메시지
-     * @param cause 원인 예외
-     */
-    public BusinessException(ErrorCode errorCode, String message, Throwable cause) {
-        super(message, cause);
         this.errorCode = errorCode;
     }
 
