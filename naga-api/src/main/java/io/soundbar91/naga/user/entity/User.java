@@ -1,18 +1,19 @@
 package io.soundbar91.naga.user.entity;
 
+import static lombok.AccessLevel.PROTECTED;
+
 import io.soundbar91.naga.common.entity.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
-import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
 @Entity
 @Table(name = "users")
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor(access = PROTECTED)
 public class User extends BaseEntity {
 
     @NotBlank(message = "이메일은 필수입니다")
