@@ -101,6 +101,9 @@ java -jar build/libs/naga-0.0.1-SNAPSHOT.jar
 - **TDD 적용 범위:** **Service 레이어에 대해서만** TDD를 적용한다. Entity, Repository, Controller는 구현 후 필요 시 테스트를 작성한다.
 - **Test-First Approach (Service Only):** Service 레이어의 새로운 기능을 구현할 때 반드시 실패하는 테스트 케이스를 먼저 작성하고 제출하라.
 - **Testing Tools:** JUnit 5, AssertJ, Mockito를 기본 테스트 스택으로 사용한다.
+- **Test Naming Convention:**
+    - **테스트 메서드명은 한글로 작성한다.** (예: `회원가입_성공()`, `이메일_중복시_예외발생()`)
+    - `@DisplayName`을 사용하여 테스트의 의도를 명확히 표현한다.
 - **Test Scope:**
     - **Unit Tests:** Service 레이어는 TDD를 적용하여 단위 테스트를 필수로 작성한다.
     - **Slice Tests:** Controller는 `@WebMvcTest`를 사용하여 API 스펙을 검증한다.
