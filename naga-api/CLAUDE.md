@@ -68,7 +68,16 @@ java -jar build/libs/naga-0.0.1-SNAPSHOT.jar
 - **Audit:** 모든 엔티티에는 생성/수정 시간을 추적하는 `@CreatedDate`, `@LastModifiedDate`를 포함한다.
 - **Validation:** Bean Validation(@NotNull, @Size 등)을 적극 사용하여 도메인 레이어 진입 전 데이터를 검증한다.
 
-## 6. AI 에이전트 작업 지침
+## 6. Lombok 사용 가이드
+- **Entity 클래스:** `@Getter`를 사용하여 Getter 메서드를 자동 생성한다. Setter는 필요한 경우에만 명시적으로 작성한다.
+- **DTO/Record:** API 요청/응답은 **Record**를 우선 사용하며, Lombok은 사용하지 않는다.
+- **Builder 패턴:** 복잡한 객체 생성 시 `@Builder`를 활용한다.
+- **주의사항:**
+  - `@Data`는 Entity에 사용하지 않는다. (양방향 연관관계 시 `toString()`, `hashCode()` 이슈)
+  - `@NoArgsConstructor`, `@AllArgsConstructor`는 필요한 경우에만 명시적으로 사용한다.
+  - JPA Entity는 `@NoArgsConstructor(access = AccessLevel.PROTECTED)`를 사용하여 무분별한 객체 생성을 방지한다.
+
+## 7. AI 에이전트 작업 지침
 - 새로운 Controller 생성 시 반드시 Swagger 어노테이션을 추가하여 문서화를 병행하라.
 - `context7`을 사용하여 `jakarta.persistence` 및 `spring-boot-starter-validation`의 최신 사용법을 확인하라.
 - 복잡한 쿼리가 필요한 경우 Querydsl 도입 여부를 먼저 제안하라.
