@@ -64,6 +64,7 @@ java -jar build/libs/naga-0.0.1-SNAPSHOT.jar
 - **예외 처리:** `@RestControllerAdvice`를 통해 전역적으로 예외를 관리하고 의미 있는 에러 메시지를 반환한다.
 
 ## 5. 데이터베이스 및 엔티티
+- **Entity 생성:** 엔티티는 **정적 팩토리 메서드**를 사용하여 생성한다. Builder 패턴 대신 명확한 의도를 드러내는 정적 팩토리 메서드(예: `User.create(email, password)`)를 사용한다.
 - **Soft Delete:** 데이터 삭제 시 실제로 지우지 않고 `is_deleted` 플래그를 사용하는 방식을 고려한다.
 - **Audit:** 모든 엔티티에는 생성/수정 시간을 추적하는 `@CreatedDate`, `@LastModifiedDate`를 포함한다.
 - **Validation:** Bean Validation(@NotNull, @Size 등)을 적극 사용하여 도메인 레이어 진입 전 데이터를 검증한다.
@@ -71,9 +72,9 @@ java -jar build/libs/naga-0.0.1-SNAPSHOT.jar
 ## 6. Lombok 사용 가이드
 - **Entity 클래스:** `@Getter`를 사용하여 Getter 메서드를 자동 생성한다. Setter는 필요한 경우에만 명시적으로 작성한다.
 - **DTO/Record:** API 요청/응답은 **Record**를 우선 사용하며, Lombok은 사용하지 않는다.
-- **Builder 패턴:** 복잡한 객체 생성 시 `@Builder`를 활용한다.
 - **주의사항:**
   - `@Data`는 Entity에 사용하지 않는다. (양방향 연관관계 시 `toString()`, `hashCode()` 이슈)
+  - `@Builder`는 Entity에 사용하지 않는다. 대신 정적 팩토리 메서드를 사용한다.
   - `@NoArgsConstructor`, `@AllArgsConstructor`는 필요한 경우에만 명시적으로 사용한다.
   - JPA Entity는 `@NoArgsConstructor(access = AccessLevel.PROTECTED)`를 사용하여 무분별한 객체 생성을 방지한다.
 
@@ -97,18 +98,19 @@ java -jar build/libs/naga-0.0.1-SNAPSHOT.jar
 - **Domain-Driven Design (Lite):** 핵심 비즈니스 로직은 Service가 아닌 Domain Entity 내부에서 처리하도록 유도한다.
 
 ## 9. Testing & TDD Standards
-- **Test-First Approach:** 새로운 기능을 구현할 때 반드시 실패하는 테스트 케이스를 먼저 작성하고 제출하라.
+- **TDD 적용 범위:** **Service 레이어에 대해서만** TDD를 적용한다. Entity, Repository, Controller는 구현 후 필요 시 테스트를 작성한다.
+- **Test-First Approach (Service Only):** Service 레이어의 새로운 기능을 구현할 때 반드시 실패하는 테스트 케이스를 먼저 작성하고 제출하라.
 - **Testing Tools:** JUnit 5, AssertJ, Mockito를 기본 테스트 스택으로 사용한다.
-- **Test Scope:** 
-    - **Unit Tests:** 비즈니스 로직(Service, Domain)은 단위 테스트를 필수로 작성한다.
+- **Test Scope:**
+    - **Unit Tests:** Service 레이어는 TDD를 적용하여 단위 테스트를 필수로 작성한다.
     - **Slice Tests:** Controller는 `@WebMvcTest`를 사용하여 API 스펙을 검증한다.
     - **Integration Tests:** 필요한 경우 `@SpringBootTest`를 사용하되, 테스트 속도를 위해 단위 테스트를 우선한다.
-- **Red-Green-Refactor:** 
+- **Red-Green-Refactor (Service Only):**
     1. 실패하는 테스트 작성 (Red)
     2. 테스트를 통과하는 최소한의 코드 작성 (Green)
     3. 코드 리팩토링 및 커밋 (Refactor) 단계를 엄격히 준수하라.
 - **Assertion Style:** `assertThat()` 등 AssertJ의 유연한 단언문을 사용하여 가독성을 높여라.
-- **TDD-Git Integration:**
+- **TDD-Git Integration (Service Only):**
     1. 실패하는 테스트 작성 후 `test: (기능명) unit test fails (Red)` 커밋.
     2. 테스트 통과 코드 작성 후 `feat: (기능명) implementation (Green)` 커밋.
     3. 리팩토링 후 `refactor: (기능명) clean up (Refactor)` 커밋.
