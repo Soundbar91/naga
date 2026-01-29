@@ -2,7 +2,12 @@ package io.soundbar91.naga.common.exception;
 
 import static ch.qos.logback.classic.Level.*;
 
+import java.util.stream.Collectors;
+
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -18,6 +23,17 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(BusinessException.class)
     public ResponseEntity<ApiResponse<Void>> handleBusinessException(BusinessException ex) {
         return buildErrorResponse(ex.getErrorCode(), ex.getMessage(), ex);
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ApiResponse<Void>> handleValidationException(MethodArgumentNotValidException ex) {
+        BindingResult bindingResult = ex.getBindingResult();
+        String message = bindingResult.getFieldErrors().stream()
+            .map(FieldError::getDefaultMessage)
+            .collect(Collectors.joining(", "));
+
+        ErrorCode errorCode = ErrorCode.INVALID_INPUT_VALUE;
+        return buildErrorResponse(errorCode, message, ex);
     }
 
     @ExceptionHandler(Exception.class)
