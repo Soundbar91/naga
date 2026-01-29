@@ -20,6 +20,8 @@ public class UserService {
 
     @Transactional
     public User create(String email, String rawPassword) {
+        validatePassword(rawPassword);
+
         if (userRepository.existsByEmail(email)) {
             throw new BusinessException(ErrorCode.USER_EMAIL_ALREADY_EXISTS);
         }
@@ -28,5 +30,19 @@ public class UserService {
         User user = User.create(email, encodedPassword);
 
         return userRepository.save(user);
+    }
+
+    private void validatePassword(String rawPassword) {
+        if (rawPassword == null || rawPassword.isBlank()) {
+            throw new BusinessException(ErrorCode.INVALID_INPUT_VALUE, "비밀번호는 필수입니다");
+        }
+
+        if (rawPassword.length() < 8 || rawPassword.length() > 20) {
+            throw new BusinessException(ErrorCode.INVALID_INPUT_VALUE, "비밀번호는 8~20자여야 합니다");
+        }
+
+        if (!rawPassword.matches("^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&]).+$")) {
+            throw new BusinessException(ErrorCode.INVALID_PASSWORD_FORMAT);
+        }
     }
 }

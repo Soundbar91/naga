@@ -30,6 +30,21 @@ public class User extends BaseEntity {
     }
 
     public static User create(String email, String password) {
+        validateEmail(email);
         return new User(email, password);
+    }
+
+    private static void validateEmail(String email) {
+        if (email == null || email.isBlank()) {
+            throw new IllegalArgumentException("이메일은 필수입니다");
+        }
+
+        if (!email.matches("^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$")) {
+            throw new IllegalArgumentException("올바른 이메일 형식이 아닙니다");
+        }
+
+        if (email.length() > 100) {
+            throw new IllegalArgumentException("이메일은 100자 이하여야 합니다");
+        }
     }
 }
