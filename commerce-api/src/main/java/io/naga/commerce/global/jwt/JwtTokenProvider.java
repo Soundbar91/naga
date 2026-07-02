@@ -1,15 +1,16 @@
 package io.naga.commerce.global.jwt;
 
 import java.nio.charset.StandardCharsets;
-import java.security.Key;
 import java.time.Instant;
 import java.util.Date;
+
+import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.security.Keys;
 
 @Component
 public class JwtTokenProvider {
@@ -26,19 +27,19 @@ public class JwtTokenProvider {
     }
 
     public String createAccessToken(Integer userId) {
-        Key key = getSecretKey();
+        SecretKey key = getSecretKey();
         return Jwts.builder()
-            .signWith(key)
+            .signWith(key, Jwts.SIG.HS256)
             .header()
             .add("typ", "JWT")
-            .add("alg", key.getAlgorithm())
+            .add("alg", Jwts.SIG.HS256.getId())
             .and()
             .claim("id", userId)
             .expiration(Date.from(Instant.now().plusMillis(accessTokenExpirationMillis)))
             .compact();
     }
 
-    private Key getSecretKey() {
-        return Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
+    private SecretKey getSecretKey() {
+        return new SecretKeySpec(secret.getBytes(StandardCharsets.UTF_8), "HmacSHA256");
     }
 }
