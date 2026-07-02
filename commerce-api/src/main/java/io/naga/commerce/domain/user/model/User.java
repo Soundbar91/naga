@@ -2,11 +2,7 @@ package io.naga.commerce.domain.user.model;
 
 import static lombok.AccessLevel.PROTECTED;
 
-import java.time.LocalDateTime;
-
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
-
+import io.naga.commerce.global.model.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -22,7 +18,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "users")
 @NoArgsConstructor(access = PROTECTED)
-public class User {
+public class User extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -35,16 +31,6 @@ public class User {
     @NotNull
     @Column(name = "password", nullable = false)
     private String password;
-
-    @NotNull
-    @CreatedDate
-    @Column(name = "created_at", columnDefinition = "TIMESTAMP", nullable = false, updatable = false)
-    private LocalDateTime createdAt;
-
-    @NotNull
-    @LastModifiedDate
-    @Column(name = "updated_at", columnDefinition = "TIMESTAMP", nullable = false, updatable = true)
-    private LocalDateTime updatedAt;
 
     @Builder
     private User(String loginId, String password) {
