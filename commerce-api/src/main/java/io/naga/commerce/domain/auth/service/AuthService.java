@@ -31,6 +31,6 @@ public class AuthService {
             throw BusinessException.of(INVALID_LOGIN_CREDENTIALS, "loginId : " + request.loginId());
         }
 
-        return new LoginResponse(jwtTokenProvider.createAccessToken(user.getId()));
+        return LoginResponse.of(jwtTokenProvider.createAccessToken(user.getId()));
     }
 }
