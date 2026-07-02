@@ -24,7 +24,7 @@ public class UserController {
         @Valid @RequestBody UserRegisterRequest request
     ) {
         userService.registerUser(request);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(ApiResponse.success());
     }
 
 }
