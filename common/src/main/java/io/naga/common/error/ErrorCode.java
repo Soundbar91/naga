@@ -1,6 +1,8 @@
 package io.naga.common.error;
 
 public enum ErrorCode {
+
+    DUPLICATE_LOGIN_ID(409, "이미 가입된 아이디입니다"),
     ;
 
     private final int status;

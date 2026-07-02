@@ -1,8 +1,14 @@
 package io.naga.commerce.domain.user.controller;
 
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.naga.commerce.domain.user.dto.request.UserRegisterRequest;
+import io.naga.commerce.domain.user.service.UserService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -10,5 +16,14 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/v1/users")
 public class UserController {
 
+    private final UserService userService;
+
+    @PostMapping
+    public ResponseEntity<Void> registerUser(
+        @Valid @RequestBody UserRegisterRequest request
+    ) {
+        userService.registerUser(request);
+        return ResponseEntity.ok().build();
+    }
 
 }
