@@ -7,11 +7,15 @@ spring:
     username: commerce
     password: commerce
   jpa:
+    defer-datasource-initialization: true
     hibernate:
       ddl-auto: update
     properties:
       hibernate:
         format_sql: true
+  sql:
+    init:
+      mode: always
 
 jwt:
   secret: local-jwt-secret-key-example-32chars!!
