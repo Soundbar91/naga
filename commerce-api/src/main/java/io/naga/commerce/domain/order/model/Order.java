@@ -1,5 +1,6 @@
 package io.naga.commerce.domain.order.model;
 
+import static io.naga.commerce.domain.order.model.OrderStatus.CREATED;
 import static jakarta.persistence.EnumType.STRING;
 import static jakarta.persistence.FetchType.LAZY;
 import static lombok.AccessLevel.PROTECTED;
@@ -55,12 +56,12 @@ public class Order extends BaseEntity {
         this.status = status;
     }
 
-    public static Order create(User user, String orderKey, Integer totalPrice, OrderStatus status) {
+    public static Order create(User user, String orderKey, Integer totalPrice) {
         return Order.builder()
             .user(user)
             .orderKey(orderKey)
             .totalPrice(totalPrice)
-            .status(status)
+            .status(CREATED)
             .build();
     }
 }

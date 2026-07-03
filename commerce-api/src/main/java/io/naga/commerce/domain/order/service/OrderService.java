@@ -1,6 +1,5 @@
 package io.naga.commerce.domain.order.service;
 
-import static io.naga.commerce.domain.order.model.OrderStatus.CREATED;
 import static io.naga.common.error.ErrorCode.NOT_FOUND_PRODUCT;
 import static io.naga.common.error.ErrorCode.NOT_FOUND_USER;
 import static io.naga.common.error.ErrorCode.PRODUCT_MISMATCH_IN_ORDER;
@@ -8,7 +7,6 @@ import static io.naga.common.error.ErrorCode.PRODUCT_MISMATCH_IN_ORDER;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -21,6 +19,7 @@ import io.naga.commerce.domain.order.model.Order;
 import io.naga.commerce.domain.order.model.OrderItem;
 import io.naga.commerce.domain.order.repository.OrderItemRepository;
 import io.naga.commerce.domain.order.repository.OrderRepository;
+import io.naga.commerce.domain.order.support.OrderKeyGenerator;
 import io.naga.commerce.domain.product.model.Product;
 import io.naga.commerce.domain.product.repository.ProductRepository;
 import io.naga.commerce.domain.user.model.User;
@@ -37,6 +36,7 @@ public class OrderService {
     private final OrderItemRepository orderItemRepository;
     private final ProductRepository productRepository;
     private final UserRepository userRepository;
+    private final OrderKeyGenerator orderKeyGenerator;
 
     @Transactional
     public OrderCreateResponse createOrder(Integer userId, OrderCreateRequest request) {
@@ -52,7 +52,7 @@ public class OrderService {
             .mapToInt(entry -> productsById.get(entry.getKey()).getPrice() * entry.getValue())
             .sum();
 
-        Order order = orderRepository.save(Order.create(user, generateOrderKey(), totalPrice, CREATED));
+        Order order = orderRepository.save(Order.create(user, orderKeyGenerator.generate(), totalPrice));
         List<OrderItem> orderItems = quantitiesByProductId.entrySet()
             .stream()
             .map(entry -> createOrderItem(order, productsById.get(entry.getKey()), entry.getValue()))
@@ -76,10 +76,6 @@ public class OrderService {
         }
 
         return products;
-    }
-
-    private String generateOrderKey() {
-        return UUID.randomUUID().toString();
     }
 
     private OrderItem createOrderItem(
