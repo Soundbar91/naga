@@ -1,8 +1,12 @@
 package io.naga.commerce.domain.product.model;
 
+import static io.naga.commerce.domain.product.model.ProductStatus.SALE;
+import static io.naga.commerce.domain.product.model.ProductStatus.SOLD_OUT;
 import static lombok.AccessLevel.PROTECTED;
 
 import io.naga.commerce.global.model.BaseEntity;
+import io.naga.common.error.BusinessException;
+import io.naga.common.error.ErrorCode;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -58,5 +62,19 @@ public class Product extends BaseEntity {
             .quantity(quantity)
             .status(status)
             .build();
+    }
+
+    public void decreaseQuantity(Integer orderQuantity) {
+        if (status != SALE) {
+            throw BusinessException.of(ErrorCode.NOT_SALE_PRODUCT, "productId : " + id);
+        }
+        if (quantity < orderQuantity) {
+            throw BusinessException.of(ErrorCode.OUT_OF_STOCK, "productId : " + id);
+        }
+
+        quantity -= orderQuantity;
+        if (quantity == 0) {
+            status = SOLD_OUT;
+        }
     }
 }
