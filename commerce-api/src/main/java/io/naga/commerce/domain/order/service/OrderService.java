@@ -40,7 +40,7 @@ public class OrderService {
     public OrderCreateResponse createOrder(Integer userId, OrderCreateRequest request) {
         User user = userRepository.findById(userId)
             .orElseThrow(() -> BusinessException.of(NOT_FOUND_USER, "userId : " + userId));
-        Map<Integer, Integer> quantitiesByProductId = getQuantitiesByProductId(request);
+        Map<Integer, Integer> quantitiesByProductId = request.getQuantitiesByProductId();
         Map<Integer, Product> productsById = getProductsById(quantitiesByProductId.keySet());
 
         Order order = orderRepository.save(Order.create(user, CREATED));
@@ -51,16 +51,6 @@ public class OrderService {
         orderItemRepository.saveAll(orderItems);
 
         return OrderCreateResponse.of(order);
-    }
-
-    private Map<Integer, Integer> getQuantitiesByProductId(OrderCreateRequest request) {
-        return request.items()
-            .stream()
-            .collect(Collectors.toMap(
-                item -> item.productId(),
-                item -> item.quantity(),
-                Integer::sum
-            ));
     }
 
     private Map<Integer, Product> getProductsById(Set<Integer> productIds) {

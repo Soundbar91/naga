@@ -1,6 +1,8 @@
 package io.naga.commerce.domain.order.dto.request;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
@@ -12,6 +14,15 @@ public record OrderCreateRequest(
     @NotEmpty(message = "주문 상품은 1개 이상이어야 합니다.")
     List<InnerOrderCreateItemRequest> items
 ) {
+
+    public Map<Integer, Integer> getQuantitiesByProductId() {
+        return items.stream()
+            .collect(Collectors.toMap(
+                InnerOrderCreateItemRequest::productId,
+                InnerOrderCreateItemRequest::quantity,
+                Integer::sum
+            ));
+    }
 
     public record InnerOrderCreateItemRequest(
         @NotNull(message = "상품 ID는 필수입니다.")
