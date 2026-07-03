@@ -16,6 +16,7 @@ const orderConflict = new Counter('order_conflict');
 const orderUnexpected = new Counter('order_unexpected');
 
 export const options = {
+  setupTimeout: '3m',
   scenarios: {
     create_orders: {
       executor: 'shared-iterations',
