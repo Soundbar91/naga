@@ -15,7 +15,13 @@ WITH RECURSIVE numbers(n) AS (
 )
 SELECT
     n,
-    CONCAT('test-user-', RIGHT(CONCAT('000', n), 3)),
+    CONCAT(
+        'test-user-',
+        CASE
+            WHEN n < 1000 THEN RIGHT(CONCAT('000', n), 3)
+            ELSE CONCAT('', n)
+        END
+    ),
     '$2b$10$HUvN9HDxKr.tClXZ7gfEI.fsGeYqU9zGYpkPG2fEvEdlNyQd6Iyi.',
     CURRENT_TIMESTAMP,
     CURRENT_TIMESTAMP
