@@ -11,17 +11,11 @@ INSERT INTO users (id, login_id, password, created_at, updated_at)
 WITH RECURSIVE numbers(n) AS (
     SELECT 1
     UNION ALL
-    SELECT n + 1 FROM numbers WHERE n < 1000
+    SELECT n + 1 FROM numbers WHERE n < 300
 )
 SELECT
     n,
-    CONCAT(
-        'test-user-',
-        CASE
-            WHEN n < 1000 THEN RIGHT(CONCAT('000', n), 3)
-            ELSE CONCAT('', n)
-        END
-    ),
+    CONCAT('test-user-', RIGHT(CONCAT('000', n), 3)),
     '$2b$10$HUvN9HDxKr.tClXZ7gfEI.fsGeYqU9zGYpkPG2fEvEdlNyQd6Iyi.',
     CURRENT_TIMESTAMP,
     CURRENT_TIMESTAMP
