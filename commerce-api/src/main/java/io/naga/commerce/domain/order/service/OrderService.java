@@ -43,7 +43,9 @@ public class OrderService {
             .orElseThrow(() -> BusinessException.of(NOT_FOUND_USER, "userId : " + userId));
         Set<Integer> productIds = request.getProductIds();
         Map<Integer, Integer> quantitiesByProductId = request.getQuantitiesByProductId();
-        Map<Integer, Product> productsById = getProductsById(productIds);
+        List<Product> products = getProducts(productIds);
+        Map<Integer, Product> productsById = products.stream()
+            .collect(Collectors.toMap(Product::getId, Function.identity()));
 
         Order order = orderRepository.save(Order.create(user, CREATED));
         List<OrderItem> orderItems = quantitiesByProductId.entrySet()
@@ -55,19 +57,20 @@ public class OrderService {
         return OrderCreateResponse.of(order);
     }
 
-    private Map<Integer, Product> getProductsById(Set<Integer> productIds) {
-        Map<Integer, Product> productsById = productRepository.findAllByIdIn(productIds)
-            .stream()
-            .collect(Collectors.toMap(Product::getId, Function.identity()));
+    private List<Product> getProducts(Set<Integer> productIds) {
+        List<Product> products = productRepository.findAllByIdIn(productIds);
+        Set<Integer> foundProductIds = products.stream()
+            .map(Product::getId)
+            .collect(Collectors.toSet());
 
-        if (productsById.isEmpty()) {
+        if (products.isEmpty()) {
             throw BusinessException.of(NOT_FOUND_PRODUCT, "productIds : " + productIds);
         }
-        if (!productsById.keySet().equals(productIds)) {
+        if (!foundProductIds.equals(productIds)) {
             throw BusinessException.of(PRODUCT_MISMATCH_IN_ORDER, "productIds : " + productIds);
         }
 
-        return productsById;
+        return products;
     }
 
     private OrderItem createOrderItem(
