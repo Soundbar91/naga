@@ -7,13 +7,13 @@ WITH RECURSIVE numbers(n) AS (
 SELECT
     n,
     CONCAT('test-user-', RIGHT(CONCAT('000', n), 3)),
-    '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy',
+    '$2b$10$HUvN9HDxKr.tClXZ7gfEI.fsGeYqU9zGYpkPG2fEvEdlNyQd6Iyi.',
     CURRENT_TIMESTAMP,
     CURRENT_TIMESTAMP
 FROM numbers
 ON DUPLICATE KEY UPDATE
     login_id = CONCAT('test-user-', RIGHT(CONCAT('000', id), 3)),
-    password = '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy',
+    password = '$2b$10$HUvN9HDxKr.tClXZ7gfEI.fsGeYqU9zGYpkPG2fEvEdlNyQd6Iyi.',
     updated_at = CURRENT_TIMESTAMP;
 
 INSERT INTO products (id, name, price, quantity, status, created_at, updated_at)
