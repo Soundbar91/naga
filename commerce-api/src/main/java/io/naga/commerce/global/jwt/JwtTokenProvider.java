@@ -11,6 +11,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import io.jsonwebtoken.Jwts;
+import io.naga.common.error.BusinessException;
+import io.naga.common.error.ErrorCode;
 
 @Component
 public class JwtTokenProvider {
@@ -37,6 +39,19 @@ public class JwtTokenProvider {
             .claim("id", userId)
             .expiration(Date.from(Instant.now().plusMillis(accessTokenExpirationMillis)))
             .compact();
+    }
+
+    public Integer getUserId(String accessToken) {
+        try {
+            return Jwts.parser()
+                .verifyWith(getSecretKey())
+                .build()
+                .parseSignedClaims(accessToken)
+                .getPayload()
+                .get("id", Integer.class);
+        } catch (RuntimeException exception) {
+            throw BusinessException.of(ErrorCode.UNAUTHORIZED, "invalid access token");
+        }
     }
 
     private SecretKey getSecretKey() {
