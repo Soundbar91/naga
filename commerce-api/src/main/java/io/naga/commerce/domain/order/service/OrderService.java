@@ -48,7 +48,7 @@ public class OrderService {
         Order order = orderRepository.save(Order.create(user, CREATED));
         List<OrderItem> orderItems = quantitiesByProductId.entrySet()
             .stream()
-            .map(entry -> createOrderItem(order, productsById, entry.getKey(), entry.getValue()))
+            .map(entry -> createOrderItem(order, productsById.get(entry.getKey()), entry.getValue()))
             .toList();
         orderItemRepository.saveAll(orderItems);
 
@@ -72,11 +72,9 @@ public class OrderService {
 
     private OrderItem createOrderItem(
         Order order,
-        Map<Integer, Product> productsById,
-        Integer productId,
+        Product product,
         Integer quantity
     ) {
-        Product product = productsById.get(productId);
         product.decreaseQuantity(quantity);
         return OrderItem.create(order, product, product.getPrice(), quantity);
     }
