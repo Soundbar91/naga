@@ -11,7 +11,7 @@ INSERT INTO users (id, login_id, password, created_at, updated_at)
 WITH RECURSIVE numbers(n) AS (
     SELECT 1
     UNION ALL
-    SELECT n + 1 FROM numbers WHERE n < 500
+    SELECT n + 1 FROM numbers WHERE n < 1000
 )
 SELECT
     n,

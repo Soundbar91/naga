@@ -4,7 +4,7 @@ import exec from 'k6/execution';
 import { Counter } from 'k6/metrics';
 
 const BASE_URL = 'http://localhost:8080';
-const USER_COUNT = 500;
+const USER_COUNT = 1000;
 const PRODUCT_ID = 1;
 const ORDER_QUANTITY = 1;
 const EXPECTED_SUCCESS = 100;
