@@ -35,19 +35,31 @@ public class Order extends BaseEntity {
     private User user;
 
     @NotNull
+    @Column(name = "order_key", nullable = false, unique = true)
+    private String orderKey;
+
+    @NotNull
+    @Column(name = "total_price", nullable = false)
+    private Integer totalPrice;
+
+    @NotNull
     @Enumerated(STRING)
     @Column(name = "status", nullable = false)
     private OrderStatus status;
 
     @Builder
-    private Order(User user, OrderStatus status) {
+    private Order(User user, String orderKey, Integer totalPrice, OrderStatus status) {
         this.user = user;
+        this.orderKey = orderKey;
+        this.totalPrice = totalPrice;
         this.status = status;
     }
 
-    public static Order create(User user, OrderStatus status) {
+    public static Order create(User user, String orderKey, Integer totalPrice, OrderStatus status) {
         return Order.builder()
             .user(user)
+            .orderKey(orderKey)
+            .totalPrice(totalPrice)
             .status(status)
             .build();
     }

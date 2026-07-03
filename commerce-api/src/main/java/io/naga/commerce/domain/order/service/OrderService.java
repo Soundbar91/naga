@@ -8,6 +8,7 @@ import static io.naga.common.error.ErrorCode.PRODUCT_MISMATCH_IN_ORDER;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -46,8 +47,12 @@ public class OrderService {
         List<Product> products = getProducts(productIds);
         Map<Integer, Product> productsById = products.stream()
             .collect(Collectors.toMap(Product::getId, Function.identity()));
+        Integer totalPrice = quantitiesByProductId.entrySet()
+            .stream()
+            .mapToInt(entry -> productsById.get(entry.getKey()).getPrice() * entry.getValue())
+            .sum();
 
-        Order order = orderRepository.save(Order.create(user, CREATED));
+        Order order = orderRepository.save(Order.create(user, generateOrderKey(), totalPrice, CREATED));
         List<OrderItem> orderItems = quantitiesByProductId.entrySet()
             .stream()
             .map(entry -> createOrderItem(order, productsById.get(entry.getKey()), entry.getValue()))
@@ -71,6 +76,10 @@ public class OrderService {
         }
 
         return products;
+    }
+
+    private String generateOrderKey() {
+        return UUID.randomUUID().toString();
     }
 
     private OrderItem createOrderItem(
