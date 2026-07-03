@@ -2,6 +2,7 @@ package io.naga.commerce.domain.order.dto.request;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import jakarta.validation.Valid;
@@ -22,6 +23,12 @@ public record OrderCreateRequest(
                 InnerOrderCreateItemRequest::quantity,
                 Integer::sum
             ));
+    }
+
+    public Set<Integer> getProductIds() {
+        return items.stream()
+            .map(InnerOrderCreateItemRequest::productId)
+            .collect(Collectors.toSet());
     }
 
     public record InnerOrderCreateItemRequest(

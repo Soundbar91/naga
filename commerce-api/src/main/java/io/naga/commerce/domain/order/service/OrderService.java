@@ -3,6 +3,7 @@ package io.naga.commerce.domain.order.service;
 import static io.naga.commerce.domain.order.model.OrderStatus.CREATED;
 import static io.naga.common.error.ErrorCode.NOT_FOUND_PRODUCT;
 import static io.naga.common.error.ErrorCode.NOT_FOUND_USER;
+import static io.naga.common.error.ErrorCode.PRODUCT_MISMATCH_IN_ORDER;
 
 import java.util.List;
 import java.util.Map;
@@ -40,8 +41,9 @@ public class OrderService {
     public OrderCreateResponse createOrder(Integer userId, OrderCreateRequest request) {
         User user = userRepository.findById(userId)
             .orElseThrow(() -> BusinessException.of(NOT_FOUND_USER, "userId : " + userId));
+        Set<Integer> productIds = request.getProductIds();
         Map<Integer, Integer> quantitiesByProductId = request.getQuantitiesByProductId();
-        Map<Integer, Product> productsById = getProductsById(quantitiesByProductId.keySet());
+        Map<Integer, Product> productsById = getProductsById(productIds);
 
         Order order = orderRepository.save(Order.create(user, CREATED));
         List<OrderItem> orderItems = quantitiesByProductId.entrySet()
@@ -58,12 +60,12 @@ public class OrderService {
             .stream()
             .collect(Collectors.toMap(Product::getId, Function.identity()));
 
-        productIds.stream()
-            .filter(productId -> !productsById.containsKey(productId))
-            .findFirst()
-            .ifPresent(productId -> {
-                throw BusinessException.of(NOT_FOUND_PRODUCT, "productId : " + productId);
-            });
+        if (productsById.isEmpty()) {
+            throw BusinessException.of(NOT_FOUND_PRODUCT, "productIds : " + productIds);
+        }
+        if (!productsById.keySet().equals(productIds)) {
+            throw BusinessException.of(PRODUCT_MISMATCH_IN_ORDER, "productIds : " + productIds);
+        }
 
         return productsById;
     }

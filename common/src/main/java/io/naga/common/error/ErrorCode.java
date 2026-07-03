@@ -7,6 +7,7 @@ public enum ErrorCode {
     UNAUTHORIZED(401, "인증이 필요합니다"),
     NOT_FOUND_USER(404, "사용자를 찾을 수 없습니다"),
     NOT_FOUND_PRODUCT(404, "상품을 찾을 수 없습니다"),
+    PRODUCT_MISMATCH_IN_ORDER(409, "주문 상품 정보가 일치하지 않습니다"),
     NOT_SALE_PRODUCT(409, "판매 중인 상품이 아닙니다"),
     OUT_OF_STOCK(409, "상품 재고가 부족합니다"),
     ;
