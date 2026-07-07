@@ -19,7 +19,9 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Getter
 @Entity
 @Table(name = "products")
@@ -72,6 +74,7 @@ public class Product extends BaseEntity {
             throw BusinessException.of(ErrorCode.OUT_OF_STOCK, "productId : " + id);
         }
 
+        log.info("Before quantity : {}, After quantity : {}", this.quantity, this.quantity - orderQuantity);
         quantity -= orderQuantity;
         if (quantity == 0) {
             status = SOLD_OUT;
