@@ -50,6 +50,9 @@ public class OrderService {
             .mapToInt(entry -> productsById.get(entry.getKey()).getPrice() * entry.getValue())
             .sum();
 
+        decreaseProductQuantities(quantitiesByProductId, productsById);
+        productRepository.flush();
+
         Order order = orderRepository.save(Order.create(user, orderKeyGenerator.generate(), totalPrice));
         List<OrderItem> orderItems = quantitiesByProductId.entrySet()
             .stream()
@@ -76,12 +79,18 @@ public class OrderService {
         return products;
     }
 
+    private void decreaseProductQuantities(
+        Map<Integer, Integer> quantitiesByProductId,
+        Map<Integer, Product> productsById
+    ) {
+        quantitiesByProductId.forEach((productId, quantity) -> productsById.get(productId).decreaseQuantity(quantity));
+    }
+
     private OrderItem createOrderItem(
         Order order,
         Product product,
         Integer quantity
     ) {
-        product.decreaseQuantity(quantity);
         return OrderItem.create(order, product, product.getPrice(), quantity);
     }
 }
