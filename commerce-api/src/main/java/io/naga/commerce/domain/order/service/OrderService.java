@@ -50,8 +50,7 @@ public class OrderService {
             .mapToInt(entry -> productsById.get(entry.getKey()).getPrice() * entry.getValue())
             .sum();
 
-        decreaseProductQuantities(quantitiesByProductId, productsById);
-        productRepository.flush();
+        decreaseProductQuantities(quantitiesByProductId);
 
         Order order = orderRepository.save(Order.create(user, orderKeyGenerator.generate(), totalPrice));
         List<OrderItem> orderItems = quantitiesByProductId.entrySet()
@@ -79,11 +78,13 @@ public class OrderService {
         return products;
     }
 
-    private void decreaseProductQuantities(
-        Map<Integer, Integer> quantitiesByProductId,
-        Map<Integer, Product> productsById
-    ) {
-        quantitiesByProductId.forEach((productId, quantity) -> productsById.get(productId).decreaseQuantity(quantity));
+    private void decreaseProductQuantities(Map<Integer, Integer> quantitiesByProductId) {
+        quantitiesByProductId.forEach((productId, quantity) -> {
+            int updatedCount = productRepository.decreaseQuantity(productId, quantity);
+            if (updatedCount == 0) {
+                throw BusinessException.of(OUT_OF_STOCK, "productId : " + productId);
+            }
+        });
     }
 
     private OrderItem createOrderItem(
