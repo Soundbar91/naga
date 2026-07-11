@@ -50,8 +50,6 @@ public class OrderService {
             .mapToInt(entry -> productsById.get(entry.getKey()).getPrice() * entry.getValue())
             .sum();
 
-        decreaseProductQuantities(quantitiesByProductId);
-
         Order order = orderRepository.save(Order.create(user, orderKeyGenerator.generate(), totalPrice));
         List<OrderItem> orderItems = quantitiesByProductId.entrySet()
             .stream()
@@ -63,7 +61,7 @@ public class OrderService {
     }
 
     private List<Product> getProducts(Set<Integer> productIds) {
-        List<Product> products = productRepository.findAllByIdIn(productIds);
+        List<Product> products = productRepository.findAllByIdInForUpdate(productIds);
         Set<Integer> foundProductIds = products.stream()
             .map(Product::getId)
             .collect(Collectors.toSet());
@@ -78,20 +76,12 @@ public class OrderService {
         return products;
     }
 
-    private void decreaseProductQuantities(Map<Integer, Integer> quantitiesByProductId) {
-        quantitiesByProductId.forEach((productId, quantity) -> {
-            int updatedCount = productRepository.decreaseQuantity(productId, quantity);
-            if (updatedCount == 0) {
-                throw BusinessException.of(OUT_OF_STOCK, "productId : " + productId);
-            }
-        });
-    }
-
     private OrderItem createOrderItem(
         Order order,
         Product product,
         Integer quantity
     ) {
+        product.decreaseQuantity(quantity);
         return OrderItem.create(order, product, product.getPrice(), quantity);
     }
 }
