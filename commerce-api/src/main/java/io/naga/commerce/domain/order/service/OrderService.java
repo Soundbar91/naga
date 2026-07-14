@@ -63,7 +63,7 @@ public class OrderService {
         if (productMap.isEmpty()) {
             throw BusinessException.of(NOT_FOUND_PRODUCT, "productIds : " + productIds);
         }
-        if (productMap.keySet() != productIds) {
+        if (!productMap.keySet().equals(productIds)) {
             throw BusinessException.of(PRODUCT_MISMATCH_IN_ORDER, "productIds : " + productIds);
         }
 
