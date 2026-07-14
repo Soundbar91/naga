@@ -2,10 +2,8 @@ package io.naga.commerce.domain.order.service;
 
 import static io.naga.common.error.ErrorCode.*;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
@@ -15,7 +13,6 @@ import io.naga.commerce.domain.order.dto.request.OrderCreateRequest;
 import io.naga.commerce.domain.order.dto.response.OrderCreateResponse;
 import io.naga.commerce.domain.order.model.Order;
 import io.naga.commerce.domain.order.model.OrderItem;
-import io.naga.commerce.domain.order.repository.OrderItemRepository;
 import io.naga.commerce.domain.order.repository.OrderRepository;
 import io.naga.commerce.domain.order.support.OrderKeyGenerator;
 import io.naga.commerce.domain.product.model.Product;
@@ -31,7 +28,6 @@ import lombok.RequiredArgsConstructor;
 public class OrderService {
 
     private final OrderRepository orderRepository;
-    private final OrderItemRepository orderItemRepository;
     private final ProductRepository productRepository;
     private final UserRepository userRepository;
     private final OrderKeyGenerator orderKeyGenerator;
@@ -40,48 +36,37 @@ public class OrderService {
     public OrderCreateResponse createOrder(Integer userId, OrderCreateRequest request) {
         User user = userRepository.findById(userId)
             .orElseThrow(() -> BusinessException.of(NOT_FOUND_USER, "userId : " + userId));
-        Set<Integer> productIds = request.getProductIds();
-        Map<Integer, Integer> quantitiesByProductId = request.getQuantitiesByProductId();
-        List<Product> products = getProducts(productIds);
-        Map<Integer, Product> productsById = products.stream()
-            .collect(Collectors.toMap(Product::getId, Function.identity()));
-        Integer totalPrice = quantitiesByProductId.entrySet()
-            .stream()
-            .mapToInt(entry -> productsById.get(entry.getKey()).getPrice() * entry.getValue())
+
+        Set<Integer> productIds = request.items().stream()
+            .map(item -> item.productId())
+            .collect(Collectors.toSet());
+        Map<Integer, Product> productMap = getProductMap(productIds);
+        Integer totalPrice = request.items().stream()
+            .mapToInt(item -> productMap.get(item.productId()).getPrice() * item.quantity())
             .sum();
 
-        Order order = orderRepository.save(Order.create(user, orderKeyGenerator.generate(), totalPrice));
-        List<OrderItem> orderItems = quantitiesByProductId.entrySet()
-            .stream()
-            .map(entry -> createOrderItem(order, productsById.get(entry.getKey()), entry.getValue()))
-            .toList();
-        orderItemRepository.saveAll(orderItems);
+        Order order = Order.create(user, orderKeyGenerator.generate(), totalPrice);
+        request.items().forEach(item -> {
+            Product product = productMap.get(item.productId());
+            product.decreaseQuantity(item.quantity());
+            order.addOrderItem(OrderItem.create(product, product.getPrice(), item.quantity()));
+        });
+        orderRepository.save(order);
 
         return OrderCreateResponse.of(order);
     }
 
-    private List<Product> getProducts(Set<Integer> productIds) {
-        List<Product> products = productRepository.findAllByIdIn(productIds);
-        Set<Integer> foundProductIds = products.stream()
-            .map(Product::getId)
-            .collect(Collectors.toSet());
-
-        if (products.isEmpty()) {
+    private Map<Integer, Product> getProductMap(Set<Integer> productIds) {
+        Map<Integer, Product> productMap = productRepository.findAllByIdIn(productIds)
+            .stream()
+            .collect(Collectors.toMap(Product::getId, product -> product));
+        if (productMap.isEmpty()) {
             throw BusinessException.of(NOT_FOUND_PRODUCT, "productIds : " + productIds);
         }
-        if (!foundProductIds.equals(productIds)) {
+        if (!productMap.keySet().equals(productIds)) {
             throw BusinessException.of(PRODUCT_MISMATCH_IN_ORDER, "productIds : " + productIds);
         }
 
-        return products;
-    }
-
-    private OrderItem createOrderItem(
-        Order order,
-        Product product,
-        Integer quantity
-    ) {
-        product.decreaseQuantity(quantity);
-        return OrderItem.create(order, product, product.getPrice(), quantity);
+        return productMap;
     }
 }
