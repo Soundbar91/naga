@@ -79,7 +79,6 @@ public class Product extends BaseEntity {
             throw BusinessException.of(ErrorCode.OUT_OF_STOCK, "productId : " + id);
         }
 
-        log.info("Before quantity : {}, After quantity : {}", this.quantity, this.quantity - orderQuantity);
         quantity -= orderQuantity;
         if (quantity == 0) {
             status = SOLD_OUT;

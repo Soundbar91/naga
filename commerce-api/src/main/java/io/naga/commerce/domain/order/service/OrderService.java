@@ -8,10 +8,6 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import org.springframework.dao.OptimisticLockingFailureException;
-import org.springframework.retry.annotation.Backoff;
-import org.springframework.retry.annotation.Recover;
-import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -40,11 +36,6 @@ public class OrderService {
     private final UserRepository userRepository;
     private final OrderKeyGenerator orderKeyGenerator;
 
-    @Retryable(
-        retryFor = OptimisticLockingFailureException.class,
-        maxAttempts = 3,
-        backoff = @Backoff(delay = 50)
-    )
     @Transactional
     public OrderCreateResponse createOrder(Integer userId, OrderCreateRequest request) {
         User user = userRepository.findById(userId)
@@ -92,10 +83,5 @@ public class OrderService {
     ) {
         product.decreaseQuantity(quantity);
         return OrderItem.create(order, product, product.getPrice(), quantity);
-    }
-
-    @Recover
-    public OrderCreateResponse recover(Integer userId, OrderCreateRequest request) {
-        throw BusinessException.of(OUT_OF_STOCK, "userId : " + userId);
     }
 }
