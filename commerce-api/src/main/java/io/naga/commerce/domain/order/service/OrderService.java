@@ -61,7 +61,7 @@ public class OrderService {
     }
 
     private List<Product> getProducts(Set<Integer> productIds) {
-        List<Product> products = productRepository.findAllByIdInForUpdate(productIds);
+        List<Product> products = productRepository.findAllByIdIn(productIds);
         Set<Integer> foundProductIds = products.stream()
             .map(Product::getId)
             .collect(Collectors.toSet());

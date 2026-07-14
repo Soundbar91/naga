@@ -7,8 +7,8 @@ TRUNCATE TABLE users;
 
 SET FOREIGN_KEY_CHECKS = 1;
 
-INSERT INTO products (id, name, price, quantity, status, created_at, updated_at)
-VALUES (1, 'k6 concurrency test product', 10000, 100, 'SALE', NOW(6), NOW(6));
+INSERT INTO products (id, name, price, quantity, status, version, created_at, updated_at)
+VALUES (1, 'k6 concurrency test product', 10000, 100, 'SALE', 0, NOW(6), NOW(6));
 
 INSERT INTO users (id, login_id, password, created_at, updated_at)
 SELECT

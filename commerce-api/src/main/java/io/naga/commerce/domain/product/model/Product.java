@@ -15,6 +15,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.persistence.Version;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Getter;
@@ -48,6 +49,10 @@ public class Product extends BaseEntity {
     @Enumerated(value = EnumType.STRING)
     @Column(name = "status", nullable = false)
     private ProductStatus status;
+
+    @Version
+    @Column(name = "version", nullable = false)
+    private Integer version;
 
     @Builder
     private Product(String name, Integer price, Integer quantity, ProductStatus status) {
