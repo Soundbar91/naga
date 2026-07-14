@@ -45,19 +45,21 @@ public class OrderItem extends BaseEntity {
     private Integer quantity;
 
     @Builder
-    private OrderItem(Order order, Product product, Integer price, Integer quantity) {
-        this.order = order;
+    private OrderItem(Product product, Integer price, Integer quantity) {
         this.product = product;
         this.price = price;
         this.quantity = quantity;
     }
 
-    public static OrderItem create(Order order, Product product, Integer price, Integer quantity) {
+    public static OrderItem create(Product product, Integer price, Integer quantity) {
         return OrderItem.builder()
-            .order(order)
             .product(product)
             .price(price)
             .quantity(quantity)
             .build();
+    }
+
+    void assignOrder(Order order) {
+        this.order = order;
     }
 }

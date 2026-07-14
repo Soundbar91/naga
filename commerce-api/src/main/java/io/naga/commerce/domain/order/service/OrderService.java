@@ -15,7 +15,6 @@ import io.naga.commerce.domain.order.dto.request.OrderCreateRequest;
 import io.naga.commerce.domain.order.dto.response.OrderCreateResponse;
 import io.naga.commerce.domain.order.model.Order;
 import io.naga.commerce.domain.order.model.OrderItem;
-import io.naga.commerce.domain.order.repository.OrderItemRepository;
 import io.naga.commerce.domain.order.repository.OrderRepository;
 import io.naga.commerce.domain.order.support.OrderKeyGenerator;
 import io.naga.commerce.domain.product.model.Product;
@@ -31,7 +30,6 @@ import lombok.RequiredArgsConstructor;
 public class OrderService {
 
     private final OrderRepository orderRepository;
-    private final OrderItemRepository orderItemRepository;
     private final ProductRepository productRepository;
     private final UserRepository userRepository;
     private final OrderKeyGenerator orderKeyGenerator;
@@ -50,12 +48,11 @@ public class OrderService {
             .mapToInt(entry -> productsById.get(entry.getKey()).getPrice() * entry.getValue())
             .sum();
 
-        Order order = orderRepository.save(Order.create(user, orderKeyGenerator.generate(), totalPrice));
-        List<OrderItem> orderItems = quantitiesByProductId.entrySet()
-            .stream()
-            .map(entry -> createOrderItem(order, productsById.get(entry.getKey()), entry.getValue()))
-            .toList();
-        orderItemRepository.saveAll(orderItems);
+        Order order = Order.create(user, orderKeyGenerator.generate(), totalPrice);
+        quantitiesByProductId.forEach((productId, quantity) ->
+            order.addOrderItem(createOrderItem(productsById.get(productId), quantity))
+        );
+        orderRepository.save(order);
 
         return OrderCreateResponse.of(order);
     }
@@ -77,11 +74,10 @@ public class OrderService {
     }
 
     private OrderItem createOrderItem(
-        Order order,
         Product product,
         Integer quantity
     ) {
         product.decreaseQuantity(quantity);
-        return OrderItem.create(order, product, product.getPrice(), quantity);
+        return OrderItem.create(product, product.getPrice(), quantity);
     }
 }
