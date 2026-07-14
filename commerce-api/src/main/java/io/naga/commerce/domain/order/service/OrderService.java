@@ -2,10 +2,8 @@ package io.naga.commerce.domain.order.service;
 
 import static io.naga.common.error.ErrorCode.*;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
@@ -38,46 +36,37 @@ public class OrderService {
     public OrderCreateResponse createOrder(Integer userId, OrderCreateRequest request) {
         User user = userRepository.findById(userId)
             .orElseThrow(() -> BusinessException.of(NOT_FOUND_USER, "userId : " + userId));
-        Set<Integer> productIds = request.getProductIds();
-        Map<Integer, Integer> quantitiesByProductId = request.getQuantitiesByProductId();
-        List<Product> products = getProducts(productIds);
-        Map<Integer, Product> productsById = products.stream()
-            .collect(Collectors.toMap(Product::getId, Function.identity()));
-        Integer totalPrice = quantitiesByProductId.entrySet()
-            .stream()
-            .mapToInt(entry -> productsById.get(entry.getKey()).getPrice() * entry.getValue())
+
+        Set<Integer> productIds = request.items().stream()
+            .map(item -> item.productId())
+            .collect(Collectors.toSet());
+        Map<Integer, Product> productMap = getProductMap(productIds);
+        Integer totalPrice = request.items().stream()
+            .mapToInt(item -> productMap.get(item.productId()).getPrice() * item.quantity())
             .sum();
 
         Order order = Order.create(user, orderKeyGenerator.generate(), totalPrice);
-        quantitiesByProductId.forEach((productId, quantity) ->
-            order.addOrderItem(createOrderItem(productsById.get(productId), quantity))
-        );
+        request.items().forEach(item -> {
+            Product product = productMap.get(item.productId());
+            product.decreaseQuantity(item.quantity());
+            order.addOrderItem(OrderItem.create(product, product.getPrice(), item.quantity()));
+        });
         orderRepository.save(order);
 
         return OrderCreateResponse.of(order);
     }
 
-    private List<Product> getProducts(Set<Integer> productIds) {
-        List<Product> products = productRepository.findAllByIdIn(productIds);
-        Set<Integer> foundProductIds = products.stream()
-            .map(Product::getId)
-            .collect(Collectors.toSet());
-
-        if (products.isEmpty()) {
+    private Map<Integer, Product> getProductMap(Set<Integer> productIds) {
+        Map<Integer, Product> productMap = productRepository.findAllByIdIn(productIds)
+            .stream()
+            .collect(Collectors.toMap(Product::getId, product -> product));
+        if (productMap.isEmpty()) {
             throw BusinessException.of(NOT_FOUND_PRODUCT, "productIds : " + productIds);
         }
-        if (!foundProductIds.equals(productIds)) {
+        if (productMap.keySet() != productIds) {
             throw BusinessException.of(PRODUCT_MISMATCH_IN_ORDER, "productIds : " + productIds);
         }
 
-        return products;
-    }
-
-    private OrderItem createOrderItem(
-        Product product,
-        Integer quantity
-    ) {
-        product.decreaseQuantity(quantity);
-        return OrderItem.create(product, product.getPrice(), quantity);
+        return productMap;
     }
 }
