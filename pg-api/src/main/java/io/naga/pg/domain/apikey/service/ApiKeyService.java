@@ -1,6 +1,8 @@
 package io.naga.pg.domain.apikey.service;
 
 import static io.naga.common.error.ErrorCode.ACTIVE_API_KEY_ALREADY_EXISTS;
+import static io.naga.common.error.ErrorCode.API_KEY_ALREADY_INACTIVE;
+import static io.naga.common.error.ErrorCode.NOT_FOUND_API_KEY;
 import static io.naga.common.error.ErrorCode.NOT_FOUND_USER;
 import static io.naga.pg.domain.apikey.model.ApiKeyStatus.ACTIVE;
 
@@ -42,5 +44,17 @@ public class ApiKeyService {
         ApiKey savedApiKey = apiKeyRepository.save(apiKey);
 
         return ApiKeyCreateResponse.of(savedApiKey, privateKey);
+    }
+
+    @Transactional
+    public void deactivateApiKey(Integer userId, Integer apiKeyId) {
+        ApiKey apiKey = apiKeyRepository.findByIdAndUserId(apiKeyId, userId)
+            .orElseThrow(() -> BusinessException.of(NOT_FOUND_API_KEY, "apiKeyId : " + apiKeyId));
+
+        if (apiKey.getStatus() != ACTIVE) {
+            throw BusinessException.of(API_KEY_ALREADY_INACTIVE, "apiKeyId : " + apiKeyId);
+        }
+
+        apiKey.deactivate();
     }
 }

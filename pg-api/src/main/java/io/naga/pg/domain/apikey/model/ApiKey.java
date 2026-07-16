@@ -59,4 +59,8 @@ public class ApiKey extends BaseEntity {
             .status(ApiKeyStatus.ACTIVE)
             .build();
     }
+
+    public void deactivate() {
+        this.status = ApiKeyStatus.INACTIVE;
+    }
 }

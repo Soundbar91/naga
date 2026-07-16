@@ -1,6 +1,8 @@
 package io.naga.pg.domain.apikey.controller;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -24,5 +26,14 @@ public class ApiKeyController {
     ) {
         ApiKeyCreateResponse response = apiKeyService.createApiKey(userId);
         return ResponseEntity.ok(ApiResponse.success(response));
+    }
+
+    @PatchMapping("/{apiKeyId}/deactivate")
+    public ResponseEntity<ApiResponse<Void>> deactivateApiKey(
+        @UserId Integer userId,
+        @PathVariable Integer apiKeyId
+    ) {
+        apiKeyService.deactivateApiKey(userId, apiKeyId);
+        return ResponseEntity.ok(ApiResponse.success());
     }
 }
