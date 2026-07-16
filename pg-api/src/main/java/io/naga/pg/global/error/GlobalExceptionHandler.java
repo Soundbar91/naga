@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import io.naga.common.error.BusinessException;
 import io.naga.common.error.ErrorCode;
@@ -38,5 +39,14 @@ public class GlobalExceptionHandler {
         return ResponseEntity
             .status(BAD_REQUEST.getStatus())
             .body(ApiResponse.error(BAD_REQUEST, fieldErrors));
+    }
+
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<ApiResponse<Void>> handleMethodArgumentTypeMismatchException(
+        MethodArgumentTypeMismatchException exception
+    ) {
+        return ResponseEntity
+            .status(BAD_REQUEST.getStatus())
+            .body(ApiResponse.error(BAD_REQUEST, "parameter : " + exception.getName()));
     }
 }

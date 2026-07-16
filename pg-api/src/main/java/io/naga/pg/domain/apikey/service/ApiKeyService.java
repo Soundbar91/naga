@@ -6,13 +6,17 @@ import static io.naga.common.error.ErrorCode.NOT_FOUND_API_KEY;
 import static io.naga.common.error.ErrorCode.NOT_FOUND_USER;
 import static io.naga.pg.domain.apikey.model.ApiKeyStatus.ACTIVE;
 
+import java.util.List;
+
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import io.naga.common.error.BusinessException;
 import io.naga.pg.domain.apikey.dto.response.ApiKeyCreateResponse;
+import io.naga.pg.domain.apikey.dto.response.ApiKeyResponse;
 import io.naga.pg.domain.apikey.model.ApiKey;
+import io.naga.pg.domain.apikey.model.ApiKeyStatus;
 import io.naga.pg.domain.apikey.repository.ApiKeyRepository;
 import io.naga.pg.domain.apikey.support.ApiKeyGenerator;
 import io.naga.pg.domain.user.model.User;
@@ -56,5 +60,22 @@ public class ApiKeyService {
         }
 
         apiKey.deactivate();
+    }
+
+    public List<ApiKeyResponse> findApiKeys(Integer userId, ApiKeyStatus status) {
+        List<ApiKey> apiKeys = status == null
+            ? apiKeyRepository.findAllByUserIdOrderByCreatedAtDescIdDesc(userId)
+            : apiKeyRepository.findAllByUserIdAndStatusOrderByCreatedAtDescIdDesc(userId, status);
+
+        return apiKeys.stream()
+            .map(ApiKeyResponse::of)
+            .toList();
+    }
+
+    public ApiKeyResponse findApiKey(Integer userId, Integer apiKeyId) {
+        ApiKey apiKey = apiKeyRepository.findByIdAndUserId(apiKeyId, userId)
+            .orElseThrow(() -> BusinessException.of(NOT_FOUND_API_KEY, "apiKeyId : " + apiKeyId));
+
+        return ApiKeyResponse.of(apiKey);
     }
 }
