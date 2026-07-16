@@ -50,4 +50,13 @@ public class ApiKey extends BaseEntity {
         this.privateKey = privateKey;
         this.status = status;
     }
+
+    public static ApiKey create(User user, String publicKey, String privateKey) {
+        return ApiKey.builder()
+            .user(user)
+            .publicKey(publicKey)
+            .privateKey(privateKey)
+            .status(ApiKeyStatus.ACTIVE)
+            .build();
+    }
 }
