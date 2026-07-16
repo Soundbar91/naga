@@ -55,7 +55,7 @@ public class ApiKeyService {
         ApiKey apiKey = apiKeyRepository.findByIdAndUserId(apiKeyId, userId)
             .orElseThrow(() -> BusinessException.of(NOT_FOUND_API_KEY, "apiKeyId : " + apiKeyId));
 
-        if (apiKey.getStatus() != ACTIVE) {
+        if (apiKey.isInactive()) {
             throw BusinessException.of(API_KEY_ALREADY_INACTIVE, "apiKeyId : " + apiKeyId);
         }
 
