@@ -34,4 +34,11 @@ public class User extends BaseEntity {
         this.loginId = loginId;
         this.password = password;
     }
+
+    public static User create(String loginId, String password) {
+        return User.builder()
+            .loginId(loginId)
+            .password(password)
+            .build();
+    }
 }
