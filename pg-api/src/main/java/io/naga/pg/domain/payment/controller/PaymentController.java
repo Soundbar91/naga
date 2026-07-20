@@ -33,12 +33,12 @@ public class PaymentController {
         @RequestHeader(value = "X-Client-Key") String clientKey,
         @Valid @RequestBody PaymentRequest request
     ) {
-        PaymentResponse payment = paymentService.requestPayment(clientKey, request);
+        PaymentResponse response = paymentService.requestPayment(clientKey, request);
         return ResponseEntity.status(FOUND).location(
             UriComponentsBuilder.fromUriString(request.successUrl())
-                .queryParam("paymentKey", payment.paymentKey())
-                .queryParam("orderId", payment.orderId())
-                .queryParam("amount", payment.amount())
+                .queryParam("paymentKey", response.paymentKey())
+                .queryParam("orderId", response.orderId())
+                .queryParam("amount", response.amount())
                 .build()
                 .encode()
                 .toUri()
