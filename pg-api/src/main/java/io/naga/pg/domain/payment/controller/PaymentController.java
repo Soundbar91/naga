@@ -33,7 +33,7 @@ public class PaymentController {
 
     @PostMapping("/request")
     public ResponseEntity<Void> requestPayment(
-        @RequestHeader(value = CLIENT_KEY_HEADER, required = false) String clientKey,
+        @RequestHeader(value = CLIENT_KEY_HEADER) String clientKey,
         @RequestBody PaymentRequest request
     ) {
         paymentRedirectUrlBuilder.validate(request.failUrl(), "failUrl");
