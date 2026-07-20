@@ -11,6 +11,7 @@ public class ApiKeyGenerator {
     private static final int KEY_LENGTH = 32;
     private static final String PUBLIC_KEY_PREFIX = "pk_";
     private static final String PRIVATE_KEY_PREFIX = "sk_";
+    private static final String CLIENT_KEY_PREFIX = "ck_";
 
     private final SecureRandom secureRandom = new SecureRandom();
 
@@ -20,6 +21,10 @@ public class ApiKeyGenerator {
 
     public String generatePrivateKey() {
         return PRIVATE_KEY_PREFIX + generateRandomValue();
+    }
+
+    public String generateClientKey() {
+        return CLIENT_KEY_PREFIX + generateRandomValue();
     }
 
     private String generateRandomValue() {

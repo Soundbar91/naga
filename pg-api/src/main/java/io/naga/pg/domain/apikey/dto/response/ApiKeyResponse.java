@@ -8,6 +8,7 @@ import io.naga.pg.domain.apikey.model.ApiKeyStatus;
 public record ApiKeyResponse(
     Integer id,
     String publicKey,
+    String clientKey,
     ApiKeyStatus status,
     LocalDateTime createdAt,
     LocalDateTime updatedAt
@@ -17,6 +18,7 @@ public record ApiKeyResponse(
         return new ApiKeyResponse(
             apiKey.getId(),
             apiKey.getPublicKey(),
+            apiKey.getClientKey(),
             apiKey.getStatus(),
             apiKey.getCreatedAt(),
             apiKey.getUpdatedAt()

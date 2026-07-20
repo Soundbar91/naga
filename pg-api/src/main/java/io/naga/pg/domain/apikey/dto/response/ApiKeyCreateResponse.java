@@ -7,6 +7,7 @@ public record ApiKeyCreateResponse(
     Integer id,
     String publicKey,
     String privateKey,
+    String clientKey,
     ApiKeyStatus status
 ) {
 
@@ -15,6 +16,7 @@ public record ApiKeyCreateResponse(
             apiKey.getId(),
             apiKey.getPublicKey(),
             privateKey,
+            apiKey.getClientKey(),
             apiKey.getStatus()
         );
     }

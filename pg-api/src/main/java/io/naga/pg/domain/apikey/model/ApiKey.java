@@ -41,23 +41,28 @@ public class ApiKey extends BaseEntity {
     @Column(name = "private_key", length = 255)
     private String privateKey;
 
+    @Column(name = "client_key", length = 255, unique = true)
+    private String clientKey;
+
     @Enumerated(STRING)
     @Column(name = "status")
     private ApiKeyStatus status;
 
     @Builder
-    private ApiKey(User user, String publicKey, String privateKey, ApiKeyStatus status) {
+    private ApiKey(User user, String publicKey, String privateKey, String clientKey, ApiKeyStatus status) {
         this.user = user;
         this.publicKey = publicKey;
         this.privateKey = privateKey;
+        this.clientKey = clientKey;
         this.status = status;
     }
 
-    public static ApiKey create(User user, String publicKey, String privateKey) {
+    public static ApiKey create(User user, String publicKey, String privateKey, String clientKey) {
         return ApiKey.builder()
             .user(user)
             .publicKey(publicKey)
             .privateKey(privateKey)
+            .clientKey(clientKey)
             .status(ApiKeyStatus.ACTIVE)
             .build();
     }

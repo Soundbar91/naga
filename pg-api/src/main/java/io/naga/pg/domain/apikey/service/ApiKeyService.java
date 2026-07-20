@@ -43,7 +43,8 @@ public class ApiKeyService {
 
         String publicKey = apiKeyGenerator.generatePublicKey();
         String privateKey = apiKeyGenerator.generatePrivateKey();
-        ApiKey apiKey = ApiKey.create(user, publicKey, passwordEncoder.encode(privateKey));
+        String clientKey = apiKeyGenerator.generateClientKey();
+        ApiKey apiKey = ApiKey.create(user, publicKey, passwordEncoder.encode(privateKey), clientKey);
         ApiKey savedApiKey = apiKeyRepository.save(apiKey);
 
         return ApiKeyCreateResponse.of(savedApiKey, privateKey);
