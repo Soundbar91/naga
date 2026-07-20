@@ -23,6 +23,11 @@ public class PaymentController {
 
     private final PaymentService paymentService;
 
+    /**
+     * TODO
+     * 1. 실패 URL 추가
+     * 2. URL 검증 로직 추가
+     */
     @PostMapping("/request")
     public ResponseEntity<Void> requestPayment(
         @RequestHeader(value = "X-Client-Key") String clientKey,
