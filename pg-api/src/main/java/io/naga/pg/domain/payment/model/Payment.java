@@ -82,4 +82,20 @@ public class Payment extends BaseEntity {
         this.canceledAt = canceledAt;
         this.failedAt = failedAt;
     }
+
+    public static Payment createRequested(
+        User user,
+        String orderId,
+        Integer amount,
+        String paymentKey
+    ) {
+        return Payment.builder()
+            .user(user)
+            .orderId(orderId)
+            .amount(amount)
+            .status(PaymentStatus.REQUESTED)
+            .paymentKey(paymentKey)
+            .requestedAt(LocalDateTime.now())
+            .build();
+    }
 }

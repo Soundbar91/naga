@@ -12,6 +12,8 @@ public interface ApiKeyRepository extends JpaRepository<ApiKey, Integer> {
 
     boolean existsByUserIdAndStatus(Integer userId, ApiKeyStatus status);
 
+    Optional<ApiKey> findByClientKeyAndStatus(String clientKey, ApiKeyStatus status);
+
     Optional<ApiKey> findByIdAndUserId(Integer id, Integer userId);
 
     List<ApiKey> findAllByUserIdOrderByCreatedAtDescIdDesc(Integer userId);
