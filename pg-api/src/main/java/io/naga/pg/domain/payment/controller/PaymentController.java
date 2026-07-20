@@ -53,7 +53,7 @@ public class PaymentController {
 
     @PostMapping("/confirm")
     public ResponseEntity<ApiResponse<PaymentConfirmResponse>> confirmPayment(
-        @RequestHeader(value = AUTHORIZATION, required = false) String authorization,
+        @RequestHeader(value = AUTHORIZATION) String authorization,
         @Valid @RequestBody PaymentConfirmRequest request
     ) {
         Integer userId = apiKeyAuthenticationService.authenticate(authorization);

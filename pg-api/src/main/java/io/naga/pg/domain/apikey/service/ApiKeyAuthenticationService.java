@@ -8,13 +8,13 @@ import java.util.Base64;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
 import io.naga.common.error.BusinessException;
 import io.naga.pg.domain.apikey.model.ApiKey;
 import io.naga.pg.domain.apikey.repository.ApiKeyRepository;
 import lombok.RequiredArgsConstructor;
 
+// TODO. 클래스 네이밍과 로직 고민해보기.
 @Service
 @RequiredArgsConstructor
 public class ApiKeyAuthenticationService {
@@ -25,8 +25,7 @@ public class ApiKeyAuthenticationService {
     private final PasswordEncoder passwordEncoder;
 
     public Integer authenticate(String authorization) {
-        if (!StringUtils.hasText(authorization)
-            || !authorization.regionMatches(true, 0, BASIC_AUTH_SCHEME, 0, BASIC_AUTH_SCHEME.length())) {
+        if (!authorization.regionMatches(true, 0, BASIC_AUTH_SCHEME, 0, BASIC_AUTH_SCHEME.length())) {
             throw BusinessException.of(UNAUTHORIZED, "Basic authorization is required");
         }
 
@@ -39,18 +38,15 @@ public class ApiKeyAuthenticationService {
         }
 
         int separatorIndex = credentials.indexOf(':');
-        if (separatorIndex <= 0 || separatorIndex == credentials.length() - 1) {
+        if (separatorIndex <= 0 || separatorIndex != credentials.length() - 1) {
             throw BusinessException.of(UNAUTHORIZED, "Basic authorization is invalid");
         }
 
-        String publicKey = credentials.substring(0, separatorIndex);
-        String privateKey = credentials.substring(separatorIndex + 1);
-        ApiKey apiKey = apiKeyRepository.findByPublicKeyAndStatus(publicKey, ACTIVE)
+        String privateKey = credentials.substring(0, separatorIndex);
+        ApiKey apiKey = apiKeyRepository.findAllByStatus(ACTIVE).stream()
+            .filter(candidate -> passwordEncoder.matches(privateKey, candidate.getPrivateKey()))
+            .findFirst()
             .orElseThrow(() -> BusinessException.of(UNAUTHORIZED, "API key credentials are invalid"));
-
-        if (!passwordEncoder.matches(privateKey, apiKey.getPrivateKey())) {
-            throw BusinessException.of(UNAUTHORIZED, "API key credentials are invalid");
-        }
 
         return apiKey.getUser().getId();
     }

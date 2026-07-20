@@ -41,10 +41,9 @@ public class ApiKeyService {
             throw BusinessException.of(ACTIVE_API_KEY_ALREADY_EXISTS, "userId : " + userId);
         }
 
-        String publicKey = apiKeyGenerator.generatePublicKey();
         String privateKey = apiKeyGenerator.generatePrivateKey();
         String clientKey = apiKeyGenerator.generateClientKey();
-        ApiKey apiKey = ApiKey.create(user, publicKey, passwordEncoder.encode(privateKey), clientKey);
+        ApiKey apiKey = ApiKey.create(user, passwordEncoder.encode(privateKey), clientKey);
         ApiKey savedApiKey = apiKeyRepository.save(apiKey);
 
         return ApiKeyCreateResponse.of(savedApiKey, privateKey);

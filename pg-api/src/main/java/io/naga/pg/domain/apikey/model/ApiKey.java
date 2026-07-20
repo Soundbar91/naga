@@ -35,9 +35,6 @@ public class ApiKey extends BaseEntity {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @Column(name = "public_key", length = 255, unique = true)
-    private String publicKey;
-
     @Column(name = "private_key", length = 255)
     private String privateKey;
 
@@ -49,18 +46,16 @@ public class ApiKey extends BaseEntity {
     private ApiKeyStatus status;
 
     @Builder
-    private ApiKey(User user, String publicKey, String privateKey, String clientKey, ApiKeyStatus status) {
+    private ApiKey(User user, String privateKey, String clientKey, ApiKeyStatus status) {
         this.user = user;
-        this.publicKey = publicKey;
         this.privateKey = privateKey;
         this.clientKey = clientKey;
         this.status = status;
     }
 
-    public static ApiKey create(User user, String publicKey, String privateKey, String clientKey) {
+    public static ApiKey create(User user, String privateKey, String clientKey) {
         return ApiKey.builder()
             .user(user)
-            .publicKey(publicKey)
             .privateKey(privateKey)
             .clientKey(clientKey)
             .status(ApiKeyStatus.ACTIVE)
