@@ -46,13 +46,9 @@ public class PaymentService {
     @Transactional
     public PaymentConfirmResponse confirmPayment(Integer userId, PaymentConfirmRequest request) {
         Payment payment = paymentRepository.findByPaymentKeyAndUserId(request.paymentKey(), userId)
-            .orElseThrow(() -> BusinessException.of(
-                NOT_FOUND_PAYMENT,
-                "paymentKey : " + request.paymentKey()
-            ));
+            .orElseThrow(() -> BusinessException.of(NOT_FOUND_PAYMENT, "paymentKey : " + request.paymentKey()));
 
         payment.approve(request.orderId(), request.amount());
-
         return PaymentConfirmResponse.of(payment);
     }
 }

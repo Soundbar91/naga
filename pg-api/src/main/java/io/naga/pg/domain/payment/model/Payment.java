@@ -105,10 +105,7 @@ public class Payment extends BaseEntity {
 
     public void approve(String orderId, Integer amount) {
         if (status != PaymentStatus.REQUESTED) {
-            throw BusinessException.of(
-                PAYMENT_ALREADY_PROCESSED,
-                "paymentKey : " + paymentKey + ", status : " + status
-            );
+            throw BusinessException.of(PAYMENT_ALREADY_PROCESSED, "paymentKey : " + paymentKey + ", status : " + status);
         }
         if (!Objects.equals(this.orderId, orderId) || !Objects.equals(this.amount, amount)) {
             throw BusinessException.of(PAYMENT_INFO_MISMATCH, "paymentKey : " + paymentKey);
