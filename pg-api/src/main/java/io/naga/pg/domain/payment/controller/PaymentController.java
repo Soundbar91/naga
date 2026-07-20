@@ -1,5 +1,6 @@
 package io.naga.pg.domain.payment.controller;
 
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpStatus.FOUND;
 
 import org.springframework.http.ResponseEntity;
@@ -10,7 +11,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import io.naga.common.response.ApiResponse;
+import io.naga.pg.domain.apikey.service.ApiKeyAuthenticationService;
+import io.naga.pg.domain.payment.dto.request.PaymentConfirmRequest;
 import io.naga.pg.domain.payment.dto.request.PaymentRequest;
+import io.naga.pg.domain.payment.dto.response.PaymentConfirmResponse;
 import io.naga.pg.domain.payment.dto.response.PaymentResponse;
 import io.naga.pg.domain.payment.service.PaymentService;
 import jakarta.validation.Valid;
@@ -21,6 +26,7 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/v1/payments")
 public class PaymentController {
 
+    private final ApiKeyAuthenticationService apiKeyAuthenticationService;
     private final PaymentService paymentService;
 
     /**
@@ -43,5 +49,15 @@ public class PaymentController {
                 .encode()
                 .toUri()
         ).build();
+    }
+
+    @PostMapping("/confirm")
+    public ResponseEntity<ApiResponse<PaymentConfirmResponse>> confirmPayment(
+        @RequestHeader(value = AUTHORIZATION, required = false) String authorization,
+        @Valid @RequestBody PaymentConfirmRequest request
+    ) {
+        Integer userId = apiKeyAuthenticationService.authenticate(authorization);
+        PaymentConfirmResponse response = paymentService.confirmPayment(userId, request);
+        return ResponseEntity.ok(ApiResponse.success(response));
     }
 }
