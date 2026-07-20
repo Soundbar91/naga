@@ -1,6 +1,7 @@
 package io.naga.pg.domain.payment.service;
 
 import static io.naga.common.error.ErrorCode.NOT_FOUND_API_KEY;
+import static io.naga.common.error.ErrorCode.NOT_FOUND_PAYMENT;
 import static io.naga.pg.domain.apikey.model.ApiKeyStatus.ACTIVE;
 
 import org.springframework.stereotype.Service;
@@ -9,7 +10,9 @@ import org.springframework.transaction.annotation.Transactional;
 import io.naga.common.error.BusinessException;
 import io.naga.pg.domain.apikey.model.ApiKey;
 import io.naga.pg.domain.apikey.repository.ApiKeyRepository;
+import io.naga.pg.domain.payment.dto.request.PaymentConfirmRequest;
 import io.naga.pg.domain.payment.dto.request.PaymentRequest;
+import io.naga.pg.domain.payment.dto.response.PaymentConfirmResponse;
 import io.naga.pg.domain.payment.dto.response.PaymentResponse;
 import io.naga.pg.domain.payment.model.Payment;
 import io.naga.pg.domain.payment.repository.PaymentRepository;
@@ -38,5 +41,18 @@ public class PaymentService {
             paymentKeyGenerator.generate()
         );
         return PaymentResponse.of(paymentRepository.save(payment));
+    }
+
+    @Transactional
+    public PaymentConfirmResponse confirmPayment(Integer userId, PaymentConfirmRequest request) {
+        Payment payment = paymentRepository.findByPaymentKeyAndUserId(request.paymentKey(), userId)
+            .orElseThrow(() -> BusinessException.of(
+                NOT_FOUND_PAYMENT,
+                "paymentKey : " + request.paymentKey()
+            ));
+
+        payment.approve(request.orderId(), request.amount());
+
+        return PaymentConfirmResponse.of(payment);
     }
 }

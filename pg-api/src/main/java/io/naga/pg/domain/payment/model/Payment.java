@@ -1,11 +1,15 @@
 package io.naga.pg.domain.payment.model;
 
+import static io.naga.common.error.ErrorCode.PAYMENT_ALREADY_PROCESSED;
+import static io.naga.common.error.ErrorCode.PAYMENT_INFO_MISMATCH;
 import static jakarta.persistence.EnumType.STRING;
 import static jakarta.persistence.FetchType.LAZY;
 import static lombok.AccessLevel.PROTECTED;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
+import io.naga.common.error.BusinessException;
 import io.naga.pg.domain.user.model.User;
 import io.naga.pg.global.model.BaseEntity;
 import jakarta.persistence.Column;
@@ -97,5 +101,20 @@ public class Payment extends BaseEntity {
             .paymentKey(paymentKey)
             .requestedAt(LocalDateTime.now())
             .build();
+    }
+
+    public void approve(String orderId, Integer amount) {
+        if (status != PaymentStatus.REQUESTED) {
+            throw BusinessException.of(
+                PAYMENT_ALREADY_PROCESSED,
+                "paymentKey : " + paymentKey + ", status : " + status
+            );
+        }
+        if (!Objects.equals(this.orderId, orderId) || !Objects.equals(this.amount, amount)) {
+            throw BusinessException.of(PAYMENT_INFO_MISMATCH, "paymentKey : " + paymentKey);
+        }
+
+        status = PaymentStatus.APPROVED;
+        approvedAt = LocalDateTime.now();
     }
 }
