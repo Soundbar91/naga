@@ -30,16 +30,13 @@ public class PaymentService {
         order.validatePayment(request.amount());
 
         PaymentConfirmResponse response = pgPaymentClient.confirmPayment(request);
-        Payment payment = Payment.createApproved(
+        paymentRepository.save(Payment.createApproved(
             order,
             response.paymentKey(),
             response.amount(),
             response.status(),
             response.approvedAt()
-        );
-        paymentRepository.save(payment);
-        order.markAsPaid();
-
+        ));
         return response;
     }
 }

@@ -73,6 +73,7 @@ public class Payment extends BaseEntity {
         String status,
         LocalDateTime approvedAt
     ) {
+        order.markAsPaid();
         return Payment.builder()
             .order(order)
             .paymentKey(paymentKey)
