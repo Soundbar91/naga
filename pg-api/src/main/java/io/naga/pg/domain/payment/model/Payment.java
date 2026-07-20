@@ -35,8 +35,8 @@ public class Payment extends BaseEntity {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @Column(name = "merchant_order_id", length = 255)
-    private String merchantOrderId;
+    @Column(name = "order_id", length = 255)
+    private String orderId;
 
     @Column(name = "amount")
     private Integer amount;
@@ -63,7 +63,7 @@ public class Payment extends BaseEntity {
     @Builder
     private Payment(
         User user,
-        String merchantOrderId,
+        String orderId,
         Integer amount,
         PaymentStatus status,
         String paymentKey,
@@ -73,7 +73,7 @@ public class Payment extends BaseEntity {
         LocalDateTime failedAt
     ) {
         this.user = user;
-        this.merchantOrderId = merchantOrderId;
+        this.orderId = orderId;
         this.amount = amount;
         this.status = status;
         this.paymentKey = paymentKey;
