@@ -17,6 +17,18 @@ spring:
       hibernate:
         format_sql: true
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,prometheus
+  endpoint:
+    health:
+      show-details: never
+  metrics:
+    tags:
+      application: ${spring.application.name}
+
 jwt:
   secret: local-jwt-secret-key-example-32chars!!
   access-token-expiration-millis: 6000000
