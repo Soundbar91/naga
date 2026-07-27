@@ -29,6 +29,12 @@ management:
     tags:
       application: ${spring.application.name}
 
+pg:
+  api:
+    base-url: http://www.pg.test
+    private-key: pgtestprivatekey
+
+
 jwt:
   secret: local-jwt-secret-key-example-32chars!!
   access-token-expiration-millis: 6000000
