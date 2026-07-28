@@ -17,6 +17,31 @@ spring:
       hibernate:
         format_sql: true
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,prometheus
+  endpoint:
+    health:
+      show-details: never
+  metrics:
+    tags:
+      application: ${spring.application.name}
+    distribution:
+      percentiles-histogram:
+        http.server.requests: true
+      minimum-expected-value:
+        http.server.requests: 5ms
+      maximum-expected-value:
+        http.server.requests: 10s
+
+pg:
+  api:
+    base-url: http://www.pg.test
+    private-key: pgtestprivatekey
+
+
 jwt:
   secret: local-jwt-secret-key-example-32chars!!
   access-token-expiration-millis: 6000000
