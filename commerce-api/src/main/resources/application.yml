@@ -6,11 +6,7 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
-  sql:
-    init:
-      mode: ${SQL_INIT_MODE}
   jpa:
-    defer-datasource-initialization: ${DEFER_DATASOURCE_INITIALIZATION}
     hibernate:
       ddl-auto: ${JPA_DDL_AUTO}
     properties:
