@@ -1,4 +1,30 @@
 services:
+  commerce-api:
+    build:
+      context: ../..
+      dockerfile: deploy/commerce-api/Dockerfile
+    image: "${IMAGE_NAME}:${IMAGE_TAG}"
+    container_name: commerce-api
+    ports:
+      - "${SERVER_PORT}:${SERVER_PORT}"
+    environment:
+      SERVER_PORT: ${SERVER_PORT}
+      DB_URL: ${DB_URL}
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+      JPA_DDL_AUTO: ${JPA_DDL_AUTO}
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_ACCESS_TOKEN_EXPIRATION_MILLIS: ${JWT_ACCESS_TOKEN_EXPIRATION_MILLIS}
+      PG_API_BASE_URL: ${PG_API_BASE_URL}
+      PG_API_PRIVATE_KEY: ${PG_API_PRIVATE_KEY}
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - default
+      - naga-network
+    restart: unless-stopped
+
   mysql:
     image: mysql:8.4
     container_name: commerce-api-mysql
@@ -15,6 +41,18 @@ services:
       - --collation-server=utf8mb4_unicode_ci
     volumes:
       - commerce-api-mysql-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -u root --password=\"$$MYSQL_ROOT_PASSWORD\""]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+    restart: unless-stopped
 
 volumes:
   commerce-api-mysql-data:
+
+networks:
+  naga-network:
+    external: true
+    name: naga-network
