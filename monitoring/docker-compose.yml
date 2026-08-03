@@ -4,8 +4,6 @@ services:
     container_name: naga-prometheus
     ports:
       - "${PROMETHEUS_PORT}:9090"
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
     volumes:
       - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
       - naga-prometheus-data:/prometheus
@@ -13,6 +11,9 @@ services:
       - --config.file=/etc/prometheus/prometheus.yml
       - --storage.tsdb.path=/prometheus
       - --storage.tsdb.retention.time=7d
+    networks:
+      - default
+      - naga-network
     restart: unless-stopped
 
   grafana:
@@ -34,3 +35,8 @@ services:
 volumes:
   naga-prometheus-data:
   naga-grafana-data:
+
+networks:
+  naga-network:
+    external: true
+    name: naga-network
