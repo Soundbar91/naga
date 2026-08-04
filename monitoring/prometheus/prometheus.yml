@@ -7,6 +7,14 @@ scrape_configs:
     metrics_path: /actuator/prometheus
     static_configs:
       - targets:
-          - host.docker.internal:8080
+          - commerce-api:8080
+        labels:
+          environment: local
+
+  - job_name: pg-api
+    metrics_path: /actuator/prometheus
+    static_configs:
+      - targets:
+          - pg-api:8081
         labels:
           environment: local
