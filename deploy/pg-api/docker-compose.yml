@@ -2,9 +2,6 @@ name: naga-pg
 
 services:
   pg-api:
-    build:
-      context: ../..
-      dockerfile: deploy/pg-api/Dockerfile
     image: "${IMAGE_NAME}:${IMAGE_TAG}"
     container_name: pg-api
     ports:

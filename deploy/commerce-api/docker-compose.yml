@@ -2,9 +2,6 @@ name: naga-commerce
 
 services:
   commerce-api:
-    build:
-      context: ../..
-      dockerfile: deploy/commerce-api/Dockerfile
     image: "${IMAGE_NAME}:${IMAGE_TAG}"
     container_name: commerce-api
     ports:
