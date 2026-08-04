@@ -1,3 +1,5 @@
+name: naga-commerce
+
 services:
   commerce-api:
     build:
@@ -6,7 +8,7 @@ services:
     image: "${IMAGE_NAME}:${IMAGE_TAG}"
     container_name: commerce-api
     ports:
-      - "${SERVER_PORT}:${SERVER_PORT}"
+      - "${SERVER_HOST_PORT}:${SERVER_PORT}"
     environment:
       SERVER_PORT: ${SERVER_PORT}
       DB_URL: ${DB_URL}
