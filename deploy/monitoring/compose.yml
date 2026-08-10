@@ -1,0 +1,83 @@
+name: naga-monitoring
+
+services:
+  prometheus:
+    image: prom/prometheus:v3.13.1
+    container_name: prometheus
+    restart: unless-stopped
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --storage.tsdb.path=/prometheus
+      - --storage.tsdb.retention.time=${PROMETHEUS_RETENTION}
+    ports:
+      - "${MONITORING_BIND_ADDRESS}:${PROMETHEUS_PORT}:9090"
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus-data:/prometheus
+    networks:
+      - monitoring-network
+      - pg-network
+      - commerce-network
+
+  grafana:
+    image: grafana/grafana:13.1.0
+    container_name: grafana
+    restart: unless-stopped
+    environment:
+      GF_SECURITY_ADMIN_USER: ${GRAFANA_ADMIN_USER}
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD}
+      GF_USERS_ALLOW_SIGN_UP: "false"
+      GF_AUTH_ANONYMOUS_ENABLED: "false"
+    ports:
+      - "${MONITORING_BIND_ADDRESS}:${GRAFANA_PORT}:3000"
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ./grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./grafana/dashboards:/var/lib/grafana/dashboards:ro
+    networks:
+      - monitoring-network
+    depends_on:
+      - prometheus
+
+  pg-mysql-exporter:
+    image: prom/mysqld-exporter:v0.19.0
+    container_name: pg-mysql-exporter
+    restart: unless-stopped
+    command:
+      - --mysqld.address=pg-db:3306
+      - --mysqld.username=${PG_DB_EXPORTER_USERNAME}
+    environment:
+      MYSQLD_EXPORTER_PASSWORD: ${PG_DB_EXPORTER_PASSWORD}
+    networks:
+      - monitoring-network
+      - pg-network
+
+  commerce-mysql-exporter:
+    image: prom/mysqld-exporter:v0.19.0
+    container_name: commerce-mysql-exporter
+    restart: unless-stopped
+    command:
+      - --mysqld.address=commerce-db:3306
+      - --mysqld.username=${COMMERCE_DB_EXPORTER_USERNAME}
+    environment:
+      MYSQLD_EXPORTER_PASSWORD: ${COMMERCE_DB_EXPORTER_PASSWORD}
+    networks:
+      - monitoring-network
+      - commerce-network
+
+volumes:
+  prometheus-data:
+    name: naga-prometheus-data
+  grafana-data:
+    name: naga-grafana-data
+
+networks:
+  monitoring-network:
+    name: naga-monitoring-network
+    driver: bridge
+  pg-network:
+    name: naga-pg-network
+    external: true
+  commerce-network:
+    name: naga-commerce-network
+    external: true
