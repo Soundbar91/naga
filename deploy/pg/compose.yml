@@ -30,7 +30,7 @@ services:
       start_period: 30s
 
   pg-api:
-    image: naga/pg-api:${PG_API_IMAGE_TAG:-local}
+    image: naga/pg-api:${PG_API_IMAGE_TAG}
     container_name: pg-api
     restart: unless-stopped
     build:
