@@ -30,7 +30,7 @@ public class GlobalExceptionHandler {
         List<FieldErrorDetail> fieldErrors = exception.getBindingResult()
             .getFieldErrors()
             .stream()
-            .map(error -> FieldErrorDetail.of(error.getField(), error.getDefaultMessage()))
+            .map(FieldErrorDetail::from)
             .toList();
 
         return ResponseEntity
