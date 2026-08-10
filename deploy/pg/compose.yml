@@ -1,0 +1,78 @@
+name: naga-pg
+
+services:
+  pg-db:
+    image: mysql:8.4
+    container_name: pg-db
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: ${PG_DB_NAME}
+      MYSQL_USER: ${PG_DB_USERNAME}
+      MYSQL_PASSWORD: ${PG_DB_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${PG_DB_ROOT_PASSWORD}
+      TZ: Asia/Seoul
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+    volumes:
+      - pg-db-data:/var/lib/mysql
+    networks:
+      - pg-network
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "mysqladmin ping -h 127.0.0.1 -u$${MYSQL_USER} -p$${MYSQL_PASSWORD} --silent"
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
+  pg-api:
+    image: naga/pg-api:${PG_API_IMAGE_TAG:-local}
+    container_name: pg-api
+    restart: unless-stopped
+    build:
+      context: ../../pg-api
+      dockerfile: ../deploy/pg/Dockerfile
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      SERVER_PORT: 8081
+      MANAGEMENT_SERVER_PORT: 9091
+      DB_URL: jdbc:mysql://pg-db:3306/${PG_DB_NAME}?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Seoul
+      DB_USERNAME: ${PG_DB_USERNAME}
+      DB_PASSWORD: ${PG_DB_PASSWORD}
+      DB_MAXIMUM_POOL_SIZE: ${PG_DB_MAXIMUM_POOL_SIZE}
+      DB_MINIMUM_IDLE: ${PG_DB_MINIMUM_IDLE}
+      DB_CONNECTION_TIMEOUT_MILLIS: ${PG_DB_CONNECTION_TIMEOUT_MILLIS}
+      JWT_SECRET: ${PG_JWT_SECRET}
+      JWT_ACCESS_TOKEN_EXPIRATION_MILLIS: ${PG_JWT_ACCESS_TOKEN_EXPIRATION_MILLIS}
+    ports:
+      - "${PG_API_PORT}:8081"
+    expose:
+      - "9091"
+    networks:
+      - pg-network
+    depends_on:
+      pg-db:
+        condition: service_healthy
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "wget --quiet --spider http://localhost:9091/actuator/health || exit 1"
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
+volumes:
+  pg-db-data:
+    name: naga-pg-db-data
+
+networks:
+  pg-network:
+    name: naga-pg-network
+    driver: bridge
