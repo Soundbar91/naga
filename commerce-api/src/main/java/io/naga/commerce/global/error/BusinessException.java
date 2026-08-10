@@ -1,5 +1,8 @@
 package io.naga.commerce.global.error;
 
+import lombok.Getter;
+
+@Getter
 public class BusinessException extends RuntimeException {
 
     private final ErrorCode errorCode;
@@ -15,11 +18,4 @@ public class BusinessException extends RuntimeException {
         return new BusinessException(errorCode, detail);
     }
 
-    public ErrorCode getErrorCode() {
-        return errorCode;
-    }
-
-    public String getDetail() {
-        return detail;
-    }
 }
