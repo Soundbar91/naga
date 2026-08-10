@@ -1,0 +1,43 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+scrape_configs:
+  - job_name: prometheus
+    static_configs:
+      - targets:
+          - prometheus:9090
+
+  - job_name: pg-api
+    metrics_path: /actuator/prometheus
+    static_configs:
+      - targets:
+          - pg-api:9091
+        labels:
+          environment: production
+          system: pg
+
+  - job_name: commerce-api
+    metrics_path: /actuator/prometheus
+    static_configs:
+      - targets:
+          - commerce-api:9091
+        labels:
+          environment: production
+          system: commerce
+
+  - job_name: pg-mysql
+    static_configs:
+      - targets:
+          - pg-mysql-exporter:9104
+        labels:
+          environment: production
+          system: pg
+
+  - job_name: commerce-mysql
+    static_configs:
+      - targets:
+          - commerce-mysql-exporter:9104
+        labels:
+          environment: production
+          system: commerce
