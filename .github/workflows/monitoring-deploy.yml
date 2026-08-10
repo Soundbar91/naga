@@ -1,0 +1,56 @@
+name: 모니터링 서버 배포
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - deploy/monitoring/**
+      - .github/workflows/monitoring-deploy.yml
+  workflow_dispatch:
+
+concurrency:
+  group: monitoring-production
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    environment: monitoring-production
+
+    env:
+      SERVER_HOST: ${{ secrets.MONITORING_SERVER_HOST }}
+      SERVER_USER: ${{ secrets.MONITORING_SERVER_USER }}
+      DEPLOY_DIR: ${{ secrets.MONITORING_DEPLOY_DIR }}
+
+    steps:
+      - name: 저장소 체크아웃
+        uses: actions/checkout@v6
+
+      - name: SSH 설정
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.MONITORING_SERVER_SSH_PRIVATE_KEY }}
+          SSH_KNOWN_HOSTS: ${{ secrets.MONITORING_SERVER_KNOWN_HOSTS }}
+        run: |
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "${SSH_PRIVATE_KEY}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          printf '%s\n' "${SSH_KNOWN_HOSTS}" > ~/.ssh/known_hosts
+
+      - name: 배포 파일 전송
+        run: |
+          scp -r \
+            deploy/monitoring/compose.yml \
+            deploy/monitoring/deploy.sh \
+            deploy/monitoring/prometheus \
+            deploy/monitoring/grafana \
+            "${SERVER_USER}@${SERVER_HOST}:${DEPLOY_DIR}/"
+
+      - name: 모니터링 배포
+        run: |
+          ssh "${SERVER_USER}@${SERVER_HOST}" \
+            "cd '${DEPLOY_DIR}' && ./deploy.sh"
