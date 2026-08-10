@@ -1,6 +1,6 @@
 package io.naga.pg.global.error;
 
-import static io.naga.common.error.ErrorCode.BAD_REQUEST;
+import static io.naga.pg.global.error.ErrorCode.BAD_REQUEST;
 
 import java.util.List;
 
@@ -10,10 +10,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
-import io.naga.common.error.BusinessException;
-import io.naga.common.error.ErrorCode;
-import io.naga.common.error.FieldErrorDetail;
-import io.naga.common.response.ApiResponse;
+import io.naga.pg.global.response.ApiResponse;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {

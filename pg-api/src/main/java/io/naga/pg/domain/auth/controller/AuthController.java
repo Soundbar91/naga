@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import io.naga.common.response.ApiResponse;
+import io.naga.pg.global.response.ApiResponse;
 import io.naga.pg.domain.auth.dto.request.LoginRequest;
 import io.naga.pg.domain.auth.dto.response.LoginResponse;
 import io.naga.pg.domain.auth.service.AuthService;

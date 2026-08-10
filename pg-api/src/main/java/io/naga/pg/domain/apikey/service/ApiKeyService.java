@@ -1,8 +1,8 @@
 package io.naga.pg.domain.apikey.service;
 
-import static io.naga.common.error.ErrorCode.ACTIVE_API_KEY_ALREADY_EXISTS;
-import static io.naga.common.error.ErrorCode.NOT_FOUND_API_KEY;
-import static io.naga.common.error.ErrorCode.NOT_FOUND_USER;
+import static io.naga.pg.global.error.ErrorCode.ACTIVE_API_KEY_ALREADY_EXISTS;
+import static io.naga.pg.global.error.ErrorCode.NOT_FOUND_API_KEY;
+import static io.naga.pg.global.error.ErrorCode.NOT_FOUND_USER;
 import static io.naga.pg.domain.apikey.model.ApiKeyStatus.ACTIVE;
 
 import java.util.List;
@@ -11,7 +11,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import io.naga.common.error.BusinessException;
+import io.naga.pg.global.error.BusinessException;
 import io.naga.pg.domain.apikey.dto.response.ApiKeyCreateResponse;
 import io.naga.pg.domain.apikey.dto.response.ApiKeyResponse;
 import io.naga.pg.domain.apikey.model.ApiKey;

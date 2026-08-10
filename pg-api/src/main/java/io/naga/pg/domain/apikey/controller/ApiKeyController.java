@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import io.naga.common.response.ApiResponse;
+import io.naga.pg.global.response.ApiResponse;
 import io.naga.pg.domain.apikey.dto.response.ApiKeyCreateResponse;
 import io.naga.pg.domain.apikey.dto.response.ApiKeyResponse;
 import io.naga.pg.domain.apikey.model.ApiKeyStatus;
