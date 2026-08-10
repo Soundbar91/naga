@@ -1,0 +1,83 @@
+name: naga-commerce
+
+services:
+  commerce-db:
+    image: mysql:8.4
+    container_name: commerce-db
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: ${COMMERCE_DB_NAME}
+      MYSQL_USER: ${COMMERCE_DB_USERNAME}
+      MYSQL_PASSWORD: ${COMMERCE_DB_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${COMMERCE_DB_ROOT_PASSWORD}
+      TZ: Asia/Seoul
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+    volumes:
+      - commerce-db-data:/var/lib/mysql
+    networks:
+      - commerce-network
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "mysqladmin ping -h 127.0.0.1 -u$${MYSQL_USER} -p$${MYSQL_PASSWORD} --silent"
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
+  commerce-api:
+    image: ghcr.io/soundbar91/naga-commerce-api:${COMMERCE_API_IMAGE_TAG}
+    container_name: commerce-api
+    restart: unless-stopped
+    build:
+      context: ../../commerce-api
+      dockerfile: ../deploy/commerce/Dockerfile
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      SERVER_PORT: 8080
+      MANAGEMENT_SERVER_PORT: 9091
+
+      DB_URL: jdbc:mysql://commerce-db:3306/${COMMERCE_DB_NAME}?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Seoul
+      DB_USERNAME: ${COMMERCE_DB_USERNAME}
+      DB_PASSWORD: ${COMMERCE_DB_PASSWORD}
+      DB_MAXIMUM_POOL_SIZE: ${COMMERCE_DB_MAXIMUM_POOL_SIZE}
+      DB_MINIMUM_IDLE: ${COMMERCE_DB_MINIMUM_IDLE}
+      DB_CONNECTION_TIMEOUT_MILLIS: ${COMMERCE_DB_CONNECTION_TIMEOUT_MILLIS}
+
+      JWT_SECRET: ${COMMERCE_JWT_SECRET}
+      JWT_ACCESS_TOKEN_EXPIRATION_MILLIS: ${COMMERCE_JWT_ACCESS_TOKEN_EXPIRATION_MILLIS}
+
+      PG_API_BASE_URL: ${PG_API_BASE_URL}
+      PG_API_PRIVATE_KEY: ${PG_API_PRIVATE_KEY}
+    ports:
+      - "${COMMERCE_API_PORT}:8080"
+    expose:
+      - "9091"
+    networks:
+      - commerce-network
+    depends_on:
+      commerce-db:
+        condition: service_healthy
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "wget --quiet --spider http://localhost:9091/actuator/health || exit 1"
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
+volumes:
+  commerce-db-data:
+    name: naga-commerce-db-data
+
+networks:
+  commerce-network:
+    name: naga-commerce-network
+    driver: bridge
