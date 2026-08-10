@@ -1,6 +1,6 @@
 package io.naga.commerce.domain.payment.client;
 
-import static io.naga.common.error.ErrorCode.PAYMENT_REQUEST_FAILED;
+import static io.naga.commerce.global.error.ErrorCode.PAYMENT_REQUEST_FAILED;
 
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Component;
@@ -9,8 +9,8 @@ import org.springframework.web.client.RestClientException;
 
 import io.naga.commerce.domain.payment.dto.request.PaymentConfirmRequest;
 import io.naga.commerce.domain.payment.dto.response.PaymentConfirmResponse;
-import io.naga.common.error.BusinessException;
-import io.naga.common.response.ApiResponse;
+import io.naga.commerce.global.error.BusinessException;
+import io.naga.commerce.global.response.ApiResponse;
 import lombok.RequiredArgsConstructor;
 
 @Component

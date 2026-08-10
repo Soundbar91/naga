@@ -11,8 +11,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import io.jsonwebtoken.Jwts;
-import io.naga.common.error.BusinessException;
-import io.naga.common.error.ErrorCode;
+import io.naga.commerce.global.error.BusinessException;
+import io.naga.commerce.global.error.ErrorCode;
 
 @Component
 public class JwtTokenProvider {

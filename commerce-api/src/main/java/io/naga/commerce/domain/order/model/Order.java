@@ -2,8 +2,8 @@ package io.naga.commerce.domain.order.model;
 
 import static io.naga.commerce.domain.order.model.OrderStatus.CREATED;
 import static io.naga.commerce.domain.order.model.OrderStatus.PAID;
-import static io.naga.common.error.ErrorCode.INVALID_ORDER_STATUS;
-import static io.naga.common.error.ErrorCode.ORDER_AMOUNT_MISMATCH;
+import static io.naga.commerce.global.error.ErrorCode.INVALID_ORDER_STATUS;
+import static io.naga.commerce.global.error.ErrorCode.ORDER_AMOUNT_MISMATCH;
 import static jakarta.persistence.CascadeType.ALL;
 import static jakarta.persistence.EnumType.STRING;
 import static jakarta.persistence.FetchType.LAZY;
@@ -15,7 +15,7 @@ import java.util.Objects;
 
 import io.naga.commerce.domain.user.model.User;
 import io.naga.commerce.global.model.BaseEntity;
-import io.naga.common.error.BusinessException;
+import io.naga.commerce.global.error.BusinessException;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Enumerated;

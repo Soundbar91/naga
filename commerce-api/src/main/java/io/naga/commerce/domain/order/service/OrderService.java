@@ -1,6 +1,6 @@
 package io.naga.commerce.domain.order.service;
 
-import static io.naga.common.error.ErrorCode.*;
+import static io.naga.commerce.global.error.ErrorCode.*;
 
 import java.util.Map;
 import java.util.Set;
@@ -19,7 +19,7 @@ import io.naga.commerce.domain.product.model.Product;
 import io.naga.commerce.domain.product.repository.ProductRepository;
 import io.naga.commerce.domain.user.model.User;
 import io.naga.commerce.domain.user.repository.UserRepository;
-import io.naga.common.error.BusinessException;
+import io.naga.commerce.global.error.BusinessException;
 import lombok.RequiredArgsConstructor;
 
 @Service

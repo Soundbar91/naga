@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 import io.naga.commerce.domain.auth.dto.request.LoginRequest;
 import io.naga.commerce.domain.auth.dto.response.LoginResponse;
 import io.naga.commerce.domain.auth.service.AuthService;
-import io.naga.common.response.ApiResponse;
+import io.naga.commerce.global.response.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
