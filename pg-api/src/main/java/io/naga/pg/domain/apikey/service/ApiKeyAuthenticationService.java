@@ -1,6 +1,6 @@
 package io.naga.pg.domain.apikey.service;
 
-import static io.naga.common.error.ErrorCode.UNAUTHORIZED;
+import static io.naga.pg.global.error.ErrorCode.UNAUTHORIZED;
 import static io.naga.pg.domain.apikey.model.ApiKeyStatus.ACTIVE;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
@@ -9,7 +9,7 @@ import java.util.Base64;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import io.naga.common.error.BusinessException;
+import io.naga.pg.global.error.BusinessException;
 import io.naga.pg.domain.apikey.model.ApiKey;
 import io.naga.pg.domain.apikey.repository.ApiKeyRepository;
 import lombok.RequiredArgsConstructor;

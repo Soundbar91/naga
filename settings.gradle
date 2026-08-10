@@ -1,5 +1,0 @@
-rootProject.name = 'naga'
-
-include 'commerce-api'
-include 'pg-api'
-include 'common'

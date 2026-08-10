@@ -1,6 +1,6 @@
 package io.naga.commerce.domain.product.service;
 
-import static io.naga.common.error.ErrorCode.NOT_FOUND_PRODUCT;
+import static io.naga.commerce.global.error.ErrorCode.NOT_FOUND_PRODUCT;
 
 import java.util.List;
 
@@ -10,7 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import io.naga.commerce.domain.product.dto.response.ProductResponse;
 import io.naga.commerce.domain.product.model.Product;
 import io.naga.commerce.domain.product.repository.ProductRepository;
-import io.naga.common.error.BusinessException;
+import io.naga.commerce.global.error.BusinessException;
 import lombok.RequiredArgsConstructor;
 
 @Service

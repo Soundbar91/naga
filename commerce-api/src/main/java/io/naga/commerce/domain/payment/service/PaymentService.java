@@ -1,6 +1,6 @@
 package io.naga.commerce.domain.payment.service;
 
-import static io.naga.common.error.ErrorCode.NOT_FOUND_ORDER;
+import static io.naga.commerce.global.error.ErrorCode.NOT_FOUND_ORDER;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,7 +12,7 @@ import io.naga.commerce.domain.payment.dto.request.PaymentConfirmRequest;
 import io.naga.commerce.domain.payment.dto.response.PaymentConfirmResponse;
 import io.naga.commerce.domain.payment.model.Payment;
 import io.naga.commerce.domain.payment.repository.PaymentRepository;
-import io.naga.common.error.BusinessException;
+import io.naga.commerce.global.error.BusinessException;
 import lombok.RequiredArgsConstructor;
 
 @Service

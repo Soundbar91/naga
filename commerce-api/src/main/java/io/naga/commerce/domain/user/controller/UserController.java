@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import io.naga.commerce.domain.user.dto.request.UserRegisterRequest;
 import io.naga.commerce.domain.user.service.UserService;
-import io.naga.common.response.ApiResponse;
+import io.naga.commerce.global.response.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 

@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import io.naga.common.response.ApiResponse;
+import io.naga.pg.global.response.ApiResponse;
 import io.naga.pg.domain.apikey.service.ApiKeyAuthenticationService;
 import io.naga.pg.domain.payment.dto.request.PaymentConfirmRequest;
 import io.naga.pg.domain.payment.dto.request.PaymentRequest;

@@ -4,9 +4,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import io.naga.common.error.BusinessException;
-import io.naga.common.error.ErrorCode;
-import io.naga.common.response.ApiResponse;
+import io.naga.commerce.global.response.ApiResponse;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {

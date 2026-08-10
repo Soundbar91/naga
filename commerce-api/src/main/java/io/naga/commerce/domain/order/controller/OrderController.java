@@ -10,7 +10,7 @@ import io.naga.commerce.domain.order.dto.request.OrderCreateRequest;
 import io.naga.commerce.domain.order.dto.response.OrderCreateResponse;
 import io.naga.commerce.domain.order.service.OrderService;
 import io.naga.commerce.global.auth.UserId;
-import io.naga.common.response.ApiResponse;
+import io.naga.commerce.global.response.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 

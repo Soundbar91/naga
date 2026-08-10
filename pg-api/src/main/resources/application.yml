@@ -1,3 +1,6 @@
+server:
+  port: ${SERVER_PORT}
+
 spring:
   application:
     name: pg-api
@@ -5,3 +8,32 @@ spring:
 jwt:
   secret: ${JWT_SECRET}
   access-token-expiration-millis: ${JWT_ACCESS_TOKEN_EXPIRATION_MILLIS}
+
+management:
+  server:
+    port: ${MANAGEMENT_SERVER_PORT}
+
+  endpoints:
+    web:
+      exposure:
+        include: health,prometheus
+
+  endpoint:
+    health:
+      show-details: never
+      probes:
+        enabled: true
+
+  metrics:
+    tags:
+      application: ${spring.application.name}
+
+    distribution:
+      percentiles-histogram:
+        http.server.requests: true
+
+      minimum-expected-value:
+        http.server.requests: 5ms
+
+      maximum-expected-value:
+        http.server.requests: 10s

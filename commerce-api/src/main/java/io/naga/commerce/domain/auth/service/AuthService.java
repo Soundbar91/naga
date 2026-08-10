@@ -1,6 +1,6 @@
 package io.naga.commerce.domain.auth.service;
 
-import static io.naga.common.error.ErrorCode.INVALID_LOGIN_CREDENTIALS;
+import static io.naga.commerce.global.error.ErrorCode.INVALID_LOGIN_CREDENTIALS;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -11,7 +11,7 @@ import io.naga.commerce.domain.auth.dto.response.LoginResponse;
 import io.naga.commerce.domain.user.model.User;
 import io.naga.commerce.domain.user.repository.UserRepository;
 import io.naga.commerce.global.jwt.JwtTokenProvider;
-import io.naga.common.error.BusinessException;
+import io.naga.commerce.global.error.BusinessException;
 import lombok.RequiredArgsConstructor;
 
 @Service

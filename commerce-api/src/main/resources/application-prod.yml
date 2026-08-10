@@ -1,0 +1,68 @@
+server:
+  port: ${SERVER_PORT}
+
+spring:
+  datasource:
+    url: ${DB_URL}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+
+    hikari:
+      pool-name: ${spring.application.name}
+      maximum-pool-size: ${DB_MAXIMUM_POOL_SIZE}
+      minimum-idle: ${DB_MINIMUM_IDLE}
+      connection-timeout: ${DB_CONNECTION_TIMEOUT_MILLIS}
+
+  h2:
+    console:
+      enabled: false
+
+  jpa:
+    open-in-view: false
+
+    hibernate:
+      ddl-auto: validate
+
+    properties:
+      hibernate:
+        format_sql: false
+
+  sql:
+    init:
+      mode: never
+
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    validate-on-migrate: true
+    baseline-on-migrate: false
+
+management:
+  server:
+    port: ${MANAGEMENT_SERVER_PORT}
+
+  endpoints:
+    web:
+      exposure:
+        include: health,prometheus
+
+  endpoint:
+    health:
+      show-details: never
+      probes:
+        enabled: true
+
+  metrics:
+    tags:
+      application: ${spring.application.name}
+
+    distribution:
+      percentiles-histogram:
+        http.server.requests: true
+
+      minimum-expected-value:
+        http.server.requests: 5ms
+
+      maximum-expected-value:
+        http.server.requests: 10s

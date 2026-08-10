@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import io.naga.commerce.domain.product.dto.response.ProductResponse;
 import io.naga.commerce.domain.product.service.ProductService;
-import io.naga.common.response.ApiResponse;
+import io.naga.commerce.global.response.ApiResponse;
 import lombok.RequiredArgsConstructor;
 
 @RestController

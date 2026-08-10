@@ -1,6 +1,6 @@
 package io.naga.commerce.domain.user.service;
 
-import static io.naga.common.error.ErrorCode.DUPLICATE_LOGIN_ID;
+import static io.naga.commerce.global.error.ErrorCode.DUPLICATE_LOGIN_ID;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -9,7 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import io.naga.commerce.domain.user.dto.request.UserRegisterRequest;
 import io.naga.commerce.domain.user.model.User;
 import io.naga.commerce.domain.user.repository.UserRepository;
-import io.naga.common.error.BusinessException;
+import io.naga.commerce.global.error.BusinessException;
 import lombok.RequiredArgsConstructor;
 
 @Service

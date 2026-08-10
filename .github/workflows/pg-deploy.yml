@@ -1,0 +1,74 @@
+name: PG 서버 배포
+
+on:
+  workflow_run:
+    workflows:
+      - pg 이미지 게시
+    types:
+      - completed
+    branches:
+      - main
+
+concurrency:
+  group: pg-production
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  packages: read
+
+jobs:
+  deploy:
+    if: github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    environment: pg-production
+
+    env:
+      SERVER_HOST: ${{ secrets.PG_SERVER_HOST }}
+      SERVER_USER: ${{ secrets.PG_SERVER_USER }}
+      DEPLOY_DIR: ${{ secrets.PG_DEPLOY_DIR }}
+      IMAGE_TAG: ${{ github.event.workflow_run.head_sha }}
+
+    steps:
+      - name: 저장소 체크아웃
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
+
+      - name: SSH 설정
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.PG_SERVER_SSH_PRIVATE_KEY }}
+          SSH_KNOWN_HOSTS: ${{ secrets.PG_SERVER_KNOWN_HOSTS }}
+        run: |
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "${SSH_PRIVATE_KEY}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          printf '%s\n' "${SSH_KNOWN_HOSTS}" > ~/.ssh/known_hosts
+
+      - name: 배포 파일 전송
+        run: |
+          scp \
+            deploy/pg/compose.yml \
+            deploy/pg/deploy.sh \
+            "${SERVER_USER}@${SERVER_HOST}:${DEPLOY_DIR}/"
+
+      - name: 서버 GHCR 로그인
+        env:
+          GHCR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GHCR_USERNAME: ${{ github.actor }}
+        run: |
+          printf '%s' "${GHCR_TOKEN}" |
+            ssh "${SERVER_USER}@${SERVER_HOST}" \
+              "docker login ghcr.io --username '${GHCR_USERNAME}' --password-stdin"
+
+      - name: PG 배포
+        run: |
+          ssh "${SERVER_USER}@${SERVER_HOST}" \
+            "cd '${DEPLOY_DIR}' && ./deploy.sh '${IMAGE_TAG}'"
+
+      - name: 서버 GHCR 로그아웃
+        if: always()
+        run: |
+          ssh "${SERVER_USER}@${SERVER_HOST}" \
+            "docker logout ghcr.io >/dev/null 2>&1 || true" || true

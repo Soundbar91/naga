@@ -1,7 +1,7 @@
 package io.naga.pg.domain.payment.model;
 
-import static io.naga.common.error.ErrorCode.PAYMENT_ALREADY_PROCESSED;
-import static io.naga.common.error.ErrorCode.PAYMENT_INFO_MISMATCH;
+import static io.naga.pg.global.error.ErrorCode.PAYMENT_ALREADY_PROCESSED;
+import static io.naga.pg.global.error.ErrorCode.PAYMENT_INFO_MISMATCH;
 import static jakarta.persistence.EnumType.STRING;
 import static jakarta.persistence.FetchType.LAZY;
 import static lombok.AccessLevel.PROTECTED;
@@ -9,7 +9,7 @@ import static lombok.AccessLevel.PROTECTED;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-import io.naga.common.error.BusinessException;
+import io.naga.pg.global.error.BusinessException;
 import io.naga.pg.domain.user.model.User;
 import io.naga.pg.global.model.BaseEntity;
 import jakarta.persistence.Column;

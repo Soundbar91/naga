@@ -5,8 +5,8 @@ import static io.naga.commerce.domain.product.model.ProductStatus.SOLD_OUT;
 import static lombok.AccessLevel.PROTECTED;
 
 import io.naga.commerce.global.model.BaseEntity;
-import io.naga.common.error.BusinessException;
-import io.naga.common.error.ErrorCode;
+import io.naga.commerce.global.error.BusinessException;
+import io.naga.commerce.global.error.ErrorCode;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;

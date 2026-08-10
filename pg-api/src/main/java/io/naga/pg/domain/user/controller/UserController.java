@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import io.naga.common.response.ApiResponse;
+import io.naga.pg.global.response.ApiResponse;
 import io.naga.pg.domain.user.dto.request.UserRegisterRequest;
 import io.naga.pg.domain.user.service.UserService;
 import jakarta.validation.Valid;

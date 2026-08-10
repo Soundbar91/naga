@@ -1,11 +1,11 @@
 package io.naga.pg.domain.apikey.model;
 
-import static io.naga.common.error.ErrorCode.API_KEY_ALREADY_INACTIVE;
+import static io.naga.pg.global.error.ErrorCode.API_KEY_ALREADY_INACTIVE;
 import static jakarta.persistence.EnumType.STRING;
 import static jakarta.persistence.FetchType.LAZY;
 import static lombok.AccessLevel.PROTECTED;
 
-import io.naga.common.error.BusinessException;
+import io.naga.pg.global.error.BusinessException;
 import io.naga.pg.domain.user.model.User;
 import io.naga.pg.global.model.BaseEntity;
 import jakarta.persistence.Column;

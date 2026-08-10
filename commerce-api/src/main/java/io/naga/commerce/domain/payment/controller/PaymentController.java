@@ -10,7 +10,7 @@ import io.naga.commerce.domain.payment.dto.request.PaymentConfirmRequest;
 import io.naga.commerce.domain.payment.dto.response.PaymentConfirmResponse;
 import io.naga.commerce.domain.payment.service.PaymentService;
 import io.naga.commerce.global.auth.UserId;
-import io.naga.common.response.ApiResponse;
+import io.naga.commerce.global.response.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
