@@ -9,6 +9,7 @@ services:
       - --config.file=/etc/prometheus/prometheus.yml
       - --storage.tsdb.path=/prometheus
       - --storage.tsdb.retention.time=${PROMETHEUS_RETENTION}
+      - --web.enable-remote-write-receiver
     ports:
       - "${MONITORING_BIND_ADDRESS}:${PROMETHEUS_PORT}:9090"
     volumes:
