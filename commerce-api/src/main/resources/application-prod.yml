@@ -56,9 +56,12 @@ management:
     distribution:
       percentiles-histogram:
         http.server.requests: true
+        http.client.requests: true
 
       minimum-expected-value:
         http.server.requests: 5ms
+        http.client.requests: 5ms
 
       maximum-expected-value:
         http.server.requests: 10s
+        http.client.requests: 10s
